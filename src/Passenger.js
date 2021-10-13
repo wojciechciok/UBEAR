@@ -15,16 +15,45 @@ class Passenger {
       this.destX = destX;
       this.destY = destY;
     }
+    this.inCar = false;
     this.id = id;
     this.color = color(0, 30, 255);
   }
   show() {
-    let drawX = this.x;
-    let drawY = this.y;
-    for (let i = -1; i <= 1; i++) {
-      for (let j = -1; j <= 1; j++) {
-        let testX = drawX + i;
-        let testY = drawY + j;
+    if (this.inCar) return;
+    const pref_pos = [
+      [-1, 0],
+      [1, 0],
+      [0, -1],
+      [0, 1],
+    ];
+    const sec_pos = [
+      [-1, -1],
+      [-1, 1],
+      [1, -1],
+      [1, 1],
+    ];
+    let drawX = -1;
+    let drawY = -1;
+    for (let c of pref_pos) {
+      let testX = this.x + c[0];
+      let testY = this.y + c[1];
+      if (
+        testX < cell_num &&
+        testX > 0 &&
+        testY < cell_num &&
+        testY > 0 &&
+        !map.grid[testX][testY]
+      ) {
+        drawX = testX;
+        drawY = testY;
+        break;
+      }
+    }
+    if (drawX < 0) {
+      for (let c of sec_pos) {
+        let testX = this.x + c[0];
+        let testY = this.y + c[1];
         if (
           testX < cell_num &&
           testX > 0 &&
@@ -37,16 +66,6 @@ class Passenger {
           break;
         }
       }
-    }
-    if (this.x + 1 < cell_num && !map.grid[this.x + 1][this.y]) {
-      drawX = this.x + 1;
-    } else if (this.x - 1 >= 0 && !map.grid[this.x - 1][this.y]) {
-      drawX = this.x - 1;
-    }
-    if (this.y + 1 < cell_num && !map.grid[this.x][this.y + 1]) {
-      drawY = this.y + 1;
-    } else if (this.y - 1 >= 0 && !map.grid[this.x][this.y - 1]) {
-      drawY = this.y - 1;
     }
 
     noFill();

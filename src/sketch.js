@@ -23,12 +23,21 @@ function setup() {
   cars.push(new Car(1));
   cars.push(new Car(2));
   cars.push(new Car(3));
+
+  // passengers.push(new Passenger(0));
   noLoop();
+  const invertedMap = [];
+  for (let row of map.grid) {
+    invertedMap.push([]);
+    for (let col of row) {
+      invertedMap[invertedMap.length - 1].push(abs(col - 1));
+    }
+  }
   httpPost(
     `${url}/init`,
     "json",
     {
-      grid: map.grid,
+      grid: invertedMap,
     },
     function (result) {
       loop();
@@ -72,11 +81,16 @@ function mousePressed() {
         destX: passenger.destX,
         destY: passenger.destY,
       },
-      cars: cars.map((c) => {
-        return { id: c.id, x: c.x, y: c.y };
-      }),
+      cars: cars
+        .filter((c) => !c.occupied)
+        .map((c) => {
+          return { id: c.id, x: c.x, y: c.y };
+        }),
     },
     function (result) {
+      cars[result.car.id].passenger = passenger;
+      cars[result.car.id].occupied = true;
+      cars[result.car.id].path = result.shortest_path;
       console.log(result);
     },
     function (error) {

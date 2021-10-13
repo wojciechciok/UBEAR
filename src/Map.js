@@ -7,10 +7,10 @@ class Map {
       this.grid.push([]);
       for (let j = 0; j < this.size; j++) {
         if (i % density == 0 || j % density == 0) {
-          this.grid[i].push(true);
+          this.grid[i].push(1);
           road.push([j, i]);
         } else {
-          this.grid[i].push(false);
+          this.grid[i].push(0);
         }
       }
     }

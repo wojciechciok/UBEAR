@@ -8,8 +8,11 @@ class Car {
       this.x = x;
       this.y = y;
     }
+    this.color = color(random(255), random(255), random(255), 60);
     this.id = id;
     this.path = [];
+    this.occupied = false;
+    this.passenger = false;
     this.movement = {
       up: [0, -1],
       down: [0, 1],
@@ -30,14 +33,24 @@ class Car {
     imageMode(CENTER);
     image(carImg, 0, 0, cell_size, cell_size);
     pop();
+    for (let p of this.path) {
+      fill(this.color);
+      square(p[0] * cell_size, p[1] * cell_size, cell_size);
+    }
   }
   move() {
     if (this.path && this.path.length > 0) {
-      const next = path[0];
+      if (this.x == this.passenger.x && this.y == this.passenger.y) {
+        this.passenger.inCar = true;
+      }
+      const next = this.path[0];
       const curr = [this.x, this.y];
       this.dir = [next[0] - curr[0], next[1] - curr[1]];
       this.x = next[0];
       this.y = next[1];
+      this.path.shift();
+    } else {
+      this.occupied = false;
     }
   }
   randomMove() {
