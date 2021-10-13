@@ -1,3 +1,5 @@
+let url = "http://192.168.1.43:105";
+
 const size = 600;
 const cell_num = 21;
 const density = 5;
@@ -21,8 +23,20 @@ function setup() {
   cars.push(new Car(1));
   cars.push(new Car(2));
   cars.push(new Car(3));
-  passengers.push(new Passenger());
-  passengers.push(new Passenger());
+  noLoop();
+  httpPost(
+    `${url}/init`,
+    "json",
+    {
+      grid: map.grid,
+    },
+    function (result) {
+      loop();
+    },
+    function (error) {
+      console.log(error);
+    }
+  );
   frameRate(10);
 }
 
@@ -40,4 +54,33 @@ function draw() {
 
 function getRandomPosition() {
   return random(road);
+}
+
+let passengerId = 0;
+function mousePressed() {
+  const passenger = new Passenger(passengerId);
+  passengerId += 1;
+  passengers.push(passenger);
+  httpPost(
+    `${url}/get-path`,
+    "json",
+    {
+      passenger: {
+        id: passenger.id,
+        x: passenger.x,
+        y: passenger.y,
+        destX: passenger.destX,
+        destY: passenger.destY,
+      },
+      cars: cars.map((c) => {
+        return { id: c.id, x: c.x, y: c.y };
+      }),
+    },
+    function (result) {
+      console.log(result);
+    },
+    function (error) {
+      console.log(error);
+    }
+  );
 }

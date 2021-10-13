@@ -1,5 +1,5 @@
 class Passenger {
-  constructor(x, y, destX, destY) {
+  constructor(id, x, y, destX, destY) {
     if (destX == undefined) {
       const dest = getRandomPosition();
       this.destX = dest[0];
@@ -15,6 +15,7 @@ class Passenger {
       this.destX = destX;
       this.destY = destY;
     }
+    this.id = id;
     this.color = color(0, 30, 255);
   }
   show() {

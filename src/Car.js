@@ -9,6 +9,7 @@ class Car {
       this.y = y;
     }
     this.id = id;
+    this.path = [];
     this.movement = {
       up: [0, -1],
       down: [0, 1],
@@ -31,6 +32,15 @@ class Car {
     pop();
   }
   move() {
+    if (this.path && this.path.length > 0) {
+      const next = path[0];
+      const curr = [this.x, this.y];
+      this.dir = [next[0] - curr[0], next[1] - curr[1]];
+      this.x = next[0];
+      this.y = next[1];
+    }
+  }
+  randomMove() {
     const possibilities = this.getValidMoves();
     const tmp = [];
     for (let possibility of possibilities) {
@@ -41,13 +51,11 @@ class Car {
         tmp.push(possibility);
       }
     }
-
     if (tmp.length == 0) {
       this.dir = possibilities[0];
     } else {
       this.dir = random(tmp);
     }
-
     this.x += this.dir[0];
     this.y += this.dir[1];
   }
