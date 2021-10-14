@@ -15,75 +15,91 @@ class Passenger {
       this.destX = destX;
       this.destY = destY;
     }
+    this.carAssigned = false;
     this.inCar = false;
     this.id = id;
-    this.color = color(0, 30, 255);
+    this.color = color(random(255), random(255), random(255));
+    this.selectPlaceForDrawing();
   }
   show() {
+    // draw circle on destination
+    noFill();
+    stroke(this.color);
+    strokeWeight(3);
+    circle(
+      (this.destX + 0.5) * cellSize,
+      (this.destY + 0.5) * cellSize,
+      cellSize - 4
+    );
+    // draw passenger only if not in car
     if (this.inCar) return;
-    const pref_pos = [
+
+    //draw circle on passenger
+    noFill();
+    stroke(this.color);
+    strokeWeight(3);
+    circle(
+      (this.drawX + 0.5) * cellSize,
+      (this.drawY + 0.5) * cellSize,
+      cellSize - 4
+    );
+    // draw passenger image
+    image(
+      passengerImg,
+      this.drawX * cellSize,
+      this.drawY * cellSize,
+      cellSize,
+      cellSize
+    );
+  }
+
+  // complicated but just chooses place on pavement for drawing the passenger
+  selectPlaceForDrawing() {
+    const prefPos = [
       [-1, 0],
       [1, 0],
       [0, -1],
       [0, 1],
     ];
-    const sec_pos = [
+    const secPos = [
       [-1, -1],
       [-1, 1],
       [1, -1],
       [1, 1],
     ];
-    let drawX = -1;
-    let drawY = -1;
-    for (let c of pref_pos) {
+    this.drawX = -1;
+    this.drawY = -1;
+    for (let c of prefPos) {
       let testX = this.x + c[0];
       let testY = this.y + c[1];
       if (
-        testX < cell_num &&
+        testX < cellNum &&
         testX > 0 &&
-        testY < cell_num &&
+        testY < cellNum &&
         testY > 0 &&
         !map.grid[testX][testY]
       ) {
-        drawX = testX;
-        drawY = testY;
+        this.drawX = testX;
+        this.drawY = testY;
         break;
       }
     }
-    if (drawX < 0) {
-      for (let c of sec_pos) {
+    if (this.drawX < 0) {
+      for (let c of secPos) {
         let testX = this.x + c[0];
         let testY = this.y + c[1];
         if (
-          testX < cell_num &&
+          testX < cellNum &&
           testX > 0 &&
-          testY < cell_num &&
+          testY < cellNum &&
           testY > 0 &&
           !map.grid[testX][testY]
         ) {
-          drawX = testX;
-          drawY = testY;
+          this.drawX = testX;
+          this.drawY = testY;
           break;
         }
       }
     }
-
-    noFill();
-    stroke(this.color);
-    strokeWeight(3);
-    circle((drawX + 0.5) * cell_size, (drawY + 0.5) * cell_size, cell_size - 4);
-    image(
-      passengerImg,
-      drawX * cell_size,
-      drawY * cell_size,
-      cell_size,
-      cell_size
-    );
-  }
-  wait() {
-    let r = red(this.color);
-    let g = green(this.color);
-    let b = blue(this.color);
-    this.color = color(r + 1, g, b - 1);
   }
 }

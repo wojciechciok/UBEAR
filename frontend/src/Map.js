@@ -1,7 +1,7 @@
 class Map {
-  constructor(size, cell_size) {
+  constructor(size) {
+    // map is just a grid of 1's an 0's
     this.size = size;
-    this.cell_size = cell_size;
     this.grid = [];
     for (let i = 0; i < this.size; i++) {
       this.grid.push([]);
@@ -15,13 +15,14 @@ class Map {
       }
     }
   }
+  // method for drawing the map
   show() {
     for (let i = 0; i < this.grid.length; i++) {
       for (let j = 0; j < this.grid.length; j++) {
         noStroke();
         if (this.grid[i][j]) fill(50);
         else fill(150);
-        square(i * this.cell_size, j * this.cell_size, this.cell_size);
+        square(i * cellSize, j * cellSize, cellSize);
       }
     }
   }
