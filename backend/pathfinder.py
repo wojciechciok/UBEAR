@@ -124,10 +124,7 @@ def get_shortest_path(cars, xDest, yDest, grid):
 
 def get_shortest_path_for_passenger(cars, passenger, grid):
     (x, y, destX, destY) = passenger.x, passenger.y, passenger.x_dest, passenger.y_dest
-    print((x, y, destX, destY))
     print(len(cars))
-    for car in cars:
-        print((car.x, car.y))
     shortest_path, chosen_car = get_shortest_path(cars, x, y, grid)
     path_for_passenger = get_path(x, y, destX, destY, grid)
     shortest_path = shortest_path + path_for_passenger[1:]

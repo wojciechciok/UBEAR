@@ -27,15 +27,12 @@ def prettify(my_dict):
 @app.route('/init', methods=['POST'])
 def init():
     content = request.json
-    app.logger.warning(content)
     grid = content["grid"]
     cache["grid"] = grid
     cache["valid_positions"] = get_valid_passenger_positions(grid)
-    app.logger.warning(content["cars"])
     cache["cars"] = list(map(lambda car: Car(car["x"], car["y"], car["id"]), content["cars"]))
     cache["passengers"] = []
     cache["next_passenger_spawn"] = 0
-    app.logger.warning(cache["cars"])
     return jsonify(content)
 
 # @app.route('/get-path', methods=['POST'])
