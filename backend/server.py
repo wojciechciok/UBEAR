@@ -4,7 +4,7 @@ from flask_cors import CORS
 import json
 # from pathfinder import get_shortest_path_for_passenger
 from passenger import get_valid_passenger_positions
-from map_helpers import update, get_passengers_and_cars
+from map_helpers import update, get_passengers_and_cars_json
 from car import Car
 import time
 
@@ -57,9 +57,9 @@ def get_cars_positions():
         while True:
             time.sleep(refresh_time)
             update(cache)
-            response = get_passengers_and_cars(cache)
+            response = get_passengers_and_cars_json(cache)
             app.logger.warning("update")
-            yield 'data:{0}'.format(json.dumps(response))
+            yield 'data: {0}\n\n'.format(response)
 
     return Response(events(), mimetype="text/event-stream")
 

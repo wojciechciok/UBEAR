@@ -1,13 +1,18 @@
 import random
 from pathfinder import get_shortest_path_for_passenger
 from passenger import Passenger
+import json
+from json import JSONEncoder
 
 # random 0-10 ticks
 PASSENGER_SPAWN_RANGE = 10
 
+class EmployeeEncoder(JSONEncoder):
+        def default(self, o):
+            return o.__dict__
 
-def get_passengers_and_cars(cache):
-    passengers_and_cars = {'pasengers': cache['passengers'], 'cars': cache['cars']}
+def get_passengers_and_cars_json(cache):
+    return json.dumps({'pasengers': cache['passengers'], 'cars': cache['cars']}, cls=EmployeeEncoder)
 
 def update(cache):
     cars = cache["cars"]
