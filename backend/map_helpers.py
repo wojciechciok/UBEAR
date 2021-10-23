@@ -12,7 +12,7 @@ class EmployeeEncoder(JSONEncoder):
             return o.__dict__
 
 def get_passengers_and_cars_json(cache):
-    return json.dumps({'pasengers': cache['passengers'], 'cars': cache['cars']}, cls=EmployeeEncoder)
+    return json.dumps({'passengers': cache['passengers'], 'cars': cache['cars']}, cls=EmployeeEncoder)
 
 def update(cache):
     cars = cache["cars"]

@@ -1,14 +1,14 @@
 // backend ulr
-let url = "http://192.168.1.31:105";
+let url = " http://192.168.1.13:105";
 
 // size of the map (width and height)
 const size = 700;
 // number of cells in a row
-const cellNum = 41;
+const cellNum = 21;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
-const carsNumber = 15;
+const carsNumber = 1;
 // refresh rate
 const refreshRate = 15;
 
@@ -17,14 +17,13 @@ const cellSize = size / cellNum;
 // global object of the map see Map.js
 let map;
 // global object of cars see Car.js
-let cars = [];
+let cars = {};
+const carsIDs = [];
 // global object of passengers see Passenger.js
-let passengers = [];
+let passengers = {};
+let passengersIDs = [];
 // helper array of cells which are road
-// let road = [];
-
-// flag for fetching car paths - exclusive access to endpoint
-// let calculating = false;
+let road = [];
 
 // vars for images
 let carImg;
@@ -42,8 +41,11 @@ function setup() {
   // initialize map
   map = new Map(cellNum);
   // create cars
+  const tmpCars = [];
   for (let i = 0; i < carsNumber; i++) {
-    cars.push(new Car(i));
+    cars[i] = new Car(i);
+    carsIDs.push(i);
+    tmpCars.push(cars[i]);
   }
   // backend needs 1 when frontend has zeros an vice versa
   const invertedMap = [];
@@ -59,7 +61,7 @@ function setup() {
     "json",
     {
       grid: invertedMap,
-      cars: cars.map((c) => {
+      cars: tmpCars.map((c) => {
         return { x: c.x, y: c.y, id: c.id };
       }),
     },
@@ -67,8 +69,8 @@ function setup() {
       // if successful allow animation
       const evtSource = new EventSource(`${url}/cars/positions`);
       evtSource.onmessage = (event) => {
-        console.log(event.data);
-        update();
+        const data = JSON.parse(event.data);
+        update(data);
       };
     },
     function (error) {
@@ -77,108 +79,46 @@ function setup() {
   );
 }
 
-// main animation loop
-// function draw() {
-//   // draw the map
-//   map.show();
-//   // draw and move all cars
-//   for (let car of cars) {
-//     car.show();
-//     car.move();
-//   }
-//   // draw all passengers
-//   for (let passenger of passengers) {
-//     passenger.show();
-//   }
-//   // check if any passengers wait for a car
-//   // checkForWaitingPassengers();
-// }
-
-function update() {
+function update(data) {
+  const carsData = data.cars;
+  const passengersData = data.passengers;
+  for (let c of carsData) {
+    cars[c.id].update(c.x, c.y, c.path, c.passengers_list);
+    console.log(cars[c.id]);
+  }
+  const currentPassengersIDs = Object.keys(passengers);
+  const newPassengerIDs = passengersData.map((p) => p.id);
+  passengersIDs = newPassengerIDs;
+  for (let key of currentPassengersIDs) {
+    if (!newPassengerIDs.includes(key)) {
+      delete passengers[key];
+    }
+  }
+  for (let passenger of passengersData) {
+    if (!currentPassengersIDs.includes(passenger.id)) {
+      passengers[passenger.id] = new Passenger(
+        passenger.id,
+        passenger.x,
+        passenger.y,
+        passenger.x_dest,
+        passenger.y_dest
+      );
+    } else {
+      passengers[passenger.id].update(passenger.is_in_car);
+    }
+  }
   map.show();
   // draw all cars
-  for (let car of cars) {
-    car.show();
+  for (let carID of carsIDs) {
+    cars[carID].show();
   }
   // draw all passengers
-  for (let passenger of passengers) {
-    passenger.show();
+  for (let passengerID of passengersIDs) {
+    passengers[passengerID].show();
   }
 }
 
 // helper function for getting a random place on the road
-// function getRandomPosition() {
-//   return random(road);
-// }
-
-// let passengerId = 0;
-
-// called when the spacebar is clicked
-// function keyPressed() {
-//   if (keyCode !== 32) return;
-//   // if busy then no
-//   if (calculating) return;
-//   // create new passenger
-//   const passenger = new Passenger(passengerId);
-//   passengers.push(passenger);
-//   // assign a car to passenger if available
-//   getCarFor(passenger);
-//   passengerId += 1;
-// }
-
-// assign a car to passenger if available
-// function getCarFor(passenger) {
-//   // flag up
-//   calculating = true;
-//   // check if there are availale cars
-//   const available = cars.filter((c) => !c.occupied);
-//   if (available.length <= 0) {
-//     passenger.carAssigned = false;
-//     calculating = false;
-//     return;
-//   }
-//   // ask backend for assigning a car and a path
-//   // sending passenger info and available cars
-//   httpPost(
-//     `${url}/get-path`,
-//     "json",
-//     {
-//       passenger: {
-//         id: passenger.id,
-//         x: passenger.x,
-//         y: passenger.y,
-//         destX: passenger.destX,
-//         destY: passenger.destY,
-//       },
-//       cars: available.map((c) => {
-//         return { id: c.id, x: c.x, y: c.y };
-//       }),
-//     },
-//     // if successful assign passenger to selected car
-//     // assign path to car
-//     function (result) {
-//       if (cars[cars[result.car.id].occupied]) {
-//         passenger.carAssigned = false;
-//       } else {
-//         passenger.carAssigned = true;
-//         cars[result.car.id].occupied = true;
-//         cars[result.car.id].passenger = passenger;
-//         cars[result.car.id].path = result.shortest_path;
-//       }
-//       // flag down
-//       calculating = false;
-//     },
-//     function (error) {
-//       calculating = false;
-//       console.log(error);
-//     }
-//   );
-// }
-
-// // take care of passengers who don't have their rides yet
-// function checkForWaitingPassengers() {
-//   const waiting = passengers.filter((p) => p.carAssigned == false);
-//   if (waiting.length > 0) {
-//     getCarFor(waiting[0]);
-//   }
-// }
+function getRandomPosition() {
+  return random(road);
+}

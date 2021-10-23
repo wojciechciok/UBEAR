@@ -8,6 +8,9 @@ from map_helpers import update, get_passengers_and_cars_json
 from car import Car
 import time
 
+# in seconds
+FRAME_RATE = 1 / 2
+
 # config = {
 #     "DEBUG": True,          # some Flask specific configs
 #     "CACHE_TYPE": "SimpleCache",  # Flask-Caching related configs
@@ -52,7 +55,7 @@ def get_cars_positions():
     if not 'grid' in cache or 'cars' not in cache:
         return "Not initialized"
     time_wait_range = 2
-    refresh_time = 1
+    refresh_time = FRAME_RATE
     def events():
         while True:
             time.sleep(refresh_time)

@@ -1,15 +1,5 @@
 class Passenger {
   constructor(id, x, y, destX, destY) {
-    // if (destX == undefined) {
-    //   const dest = getRandomPosition();
-    //   this.destX = dest[0];
-    //   this.destY = dest[1];
-    // }
-    // if (x == undefined) {
-    //   const pos = getRandomPosition();
-    //   this.x = pos[0];
-    //   this.y = pos[1];
-    // } else {
     this.x = x;
     this.y = y;
     this.destX = destX;
@@ -20,6 +10,9 @@ class Passenger {
     this.id = id;
     this.color = color(random(255), random(255), random(255));
     this.selectPlaceForDrawing();
+  }
+  update(inCar) {
+    this.inCar = inCar;
   }
   show() {
     // draw circle on destination
