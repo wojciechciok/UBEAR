@@ -9,7 +9,7 @@ from car import Car
 import time
 
 # in seconds
-FRAME_RATE = 1 / 2
+FRAME_RATE = 1 / 5
 
 # config = {
 #     "DEBUG": True,          # some Flask specific configs

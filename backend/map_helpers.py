@@ -25,17 +25,18 @@ def update(cache):
                     car.passengers_list.remove(passenger)
                     cache["passengers"].remove(passenger)
         car.move()
-    
-    non_occupied_cars = list(filter(lambda car: len(car.passengers_list) == 0, cars))
 
-    for passenger in cache["passengers"]:
-        if passenger.car_id is not None or len(non_occupied_cars) == 0:
-            pass # cruisin in da hood
-        else:
-            (shortest_path, car) = get_shortest_path_for_passenger(non_occupied_cars, passenger, cache["grid"])
-            car.path = shortest_path
-            car.passengers_list.append(passenger)
-            passenger.car_id = car.id
+        for passenger in cache["passengers"]:
+            if passenger.car_id is not None:
+                pass # cruisin in da hood
+            else:
+                non_occupied_cars = list(filter(lambda car: len(car.passengers_list) == 0, cars))
+                if len(non_occupied_cars) <= 0:
+                    continue
+                (shortest_path, car) = get_shortest_path_for_passenger(non_occupied_cars, passenger, cache["grid"])
+                car.path = shortest_path
+                car.passengers_list.append(passenger)
+                passenger.car_id = car.id
 
     
     current_next_passenger_spawn = cache["next_passenger_spawn"]

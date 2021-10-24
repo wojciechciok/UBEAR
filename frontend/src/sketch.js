@@ -4,11 +4,11 @@ let url = " http://192.168.1.13:105";
 // size of the map (width and height)
 const size = 700;
 // number of cells in a row
-const cellNum = 21;
+const cellNum = 41;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
-const carsNumber = 1;
+const carsNumber = 15;
 // refresh rate
 const refreshRate = 15;
 
@@ -80,21 +80,23 @@ function setup() {
 }
 
 function update(data) {
+  // extract data
   const carsData = data.cars;
   const passengersData = data.passengers;
+  // update cars
   for (let c of carsData) {
     cars[c.id].update(c.x, c.y, c.path, c.passengers_list);
-    console.log(cars[c.id]);
   }
   const currentPassengersIDs = Object.keys(passengers);
-  const newPassengerIDs = passengersData.map((p) => p.id);
-  passengersIDs = newPassengerIDs;
+  passengersIDs = passengersData.map((p) => p.id);
+  // delete unused passengers
   for (let key of currentPassengersIDs) {
-    if (!newPassengerIDs.includes(key)) {
+    if (!passengersIDs.includes(key)) {
       delete passengers[key];
     }
   }
   for (let passenger of passengersData) {
+    // add new passengers
     if (!currentPassengersIDs.includes(passenger.id)) {
       passengers[passenger.id] = new Passenger(
         passenger.id,
@@ -103,10 +105,13 @@ function update(data) {
         passenger.x_dest,
         passenger.y_dest
       );
-    } else {
+    }
+    // update passenger
+    else {
       passengers[passenger.id].update(passenger.is_in_car);
     }
   }
+  // draw the map
   map.show();
   // draw all cars
   for (let carID of carsIDs) {
