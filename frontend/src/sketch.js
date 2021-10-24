@@ -1,5 +1,5 @@
 // backend ulr
-let url = " http://192.168.1.13:105";
+let url = " http://localhost:105";
 
 // size of the map (width and height)
 const size = 700;
