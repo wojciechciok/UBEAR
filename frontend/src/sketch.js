@@ -197,7 +197,8 @@ function startSimulation(){
         const data = JSON.parse(event.data);
         console.log(data)
         if (data.finished){
-          alert("Simulation finished")
+          alert("Simulation finished");
+          evtSource.close();
         }
         update(data);
       };
