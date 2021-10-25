@@ -13,7 +13,7 @@ let input_passangerSpawnMax;
 // size of the map (width and height)
 const size = 700;
 // number of cells in a row
-const cellNum = 41;
+const cellNum = 21;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
@@ -37,6 +37,12 @@ let road = [];
 // vars for images
 let carImg;
 let passengerImg;
+
+// Start Button
+let button;
+
+// Simuation Started flag
+let simulationStarted = false;
 
 // loading images
 function preload() {
@@ -76,48 +82,15 @@ function setup() {
 
 
   map = new Map(cellNum);
-  // create cars
-  const tmpCars = [];
-  for (let i = 0; i < slider_carNumber.value(); i++) {
-    cars[i] = new Car(i);
-    carsIDs.push(i);
-    tmpCars.push(cars[i]);
-  }
-  // backend needs 1 when frontend has zeros an vice versa
-  const invertedMap = [];
-  for (let row of map.grid) {
-    invertedMap.push([]);
-    for (let col of row) {
-      invertedMap[invertedMap.length - 1].push(abs(col - 1));
-    }
-  }
-  // send the map to the backend
-  httpPost(
-    `${url}/init`,
-    "json",
-    {
-      grid: invertedMap,
-      cars: tmpCars.map((c) => {
-        return { x: c.x, y: c.y, id: c.id };
 
-      }),
-      
-      maxUpdates: slider_maxUpdates.value(),
-      passangerSpawnMin: input_passangerSpawnMin.value(),
-      passangerSpawnMax: input_passangerSpawnMax.value(),
-    },
-    function (result) {
-      // if successful allow animation
-      const evtSource = new EventSource(`${url}/cars/positions`);
-      evtSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        update(data);
-      };
-    },
-    function (error) {
-      console.log(error);
-    }
-  );
+  map.show();
+
+
+  // Create Button
+  button = createButton('Start Simulation');
+  button.position(0, size + 1);
+  button.mousePressed(startSimulation);
+
 }
 
 function update(data) {
@@ -167,4 +140,63 @@ function update(data) {
 // helper function for getting a random place on the road
 function getRandomPosition() {
   return random(road);
+}
+
+function mouseClicked(event) {
+  if(simulationStarted) return;
+  let x = Math.floor(mouseX / cellSize);
+  let y = Math.floor(mouseY / cellSize);
+  map.roadConstruction(x,y);
+  map.show();
+
+}
+
+function startSimulation(){
+  for(let x = 0;x < map.grid.length;x++)
+  {
+    for(let y = 0;y < map.grid[x].length;y++) {
+      if(map.grid[x][y]) {
+        road.push([x,y]);
+      }
+    }
+  }
+    // backend needs 1 when frontend has zeros an vice versa
+    const invertedMap = [];
+    for (let row of map.grid) {
+      invertedMap.push([]);
+      for (let col of row) {
+        invertedMap[invertedMap.length - 1].push(abs(col - 1));
+      } 
+    }
+
+  // create cars
+  const tmpCars = [];
+  for (let i = 0; i < carsNumber; i++) {
+    cars[i] = new Car(i);
+    carsIDs.push(i);
+    tmpCars.push(cars[i]);
+  }
+
+  // send the map to the backend
+  httpPost(
+    `${url}/init`,
+    "json",
+    {
+      grid: invertedMap,
+      cars: tmpCars.map((c) => {
+        return { x: c.x, y: c.y, id: c.id };
+      }),
+    },
+    function (result) {
+      // if successful allow animation
+      const evtSource = new EventSource(`${url}/cars/positions`);
+      evtSource.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        update(data);
+      };
+    },
+    function (error) {
+      console.log(error);
+    }
+  );
 }
