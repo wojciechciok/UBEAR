@@ -8,7 +8,6 @@ class Map {
       for (let j = 0; j < this.size; j++) {
         if (i % density == 0 || j % density == 0) {
           this.grid[i].push(1);
-          road.push([j, i]);
         } else {
           this.grid[i].push(0);
         }
@@ -25,5 +24,8 @@ class Map {
         square(i * cellSize, j * cellSize, cellSize);
       }
     }
+  }
+  roadConstruction(x, y){
+    this.grid[x][y] = !this.grid[x][y]
   }
 }
