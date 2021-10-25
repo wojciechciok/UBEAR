@@ -70,6 +70,9 @@ function setup() {
       const evtSource = new EventSource(`${url}/cars/positions`);
       evtSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        if(data.finished){
+          alert('Simulation finished')
+        }
         update(data);
       };
     },
@@ -126,8 +129,4 @@ function update(data) {
 // helper function for getting a random place on the road
 function getRandomPosition() {
   return random(road);
-}
-
-function mouseClicked() {
-  return new Car(Object.keys(cars).length + 1, mouseX, mouseY);
 }
