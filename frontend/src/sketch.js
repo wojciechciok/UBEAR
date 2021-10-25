@@ -64,6 +64,14 @@ function setup() {
   input_passangerSpawnMin = createInput('');
   input_passangerSpawnMin.position(0, 0);
   input_passangerSpawnMin.size(100);
+
+  background('grey');
+  input_passangerSpawnMax = createInput('');
+  input_passangerSpawnMax.position(0, 0);
+  input_passangerSpawnMax.size(100);
+
+
+ 
   // initialize map
 
 
@@ -96,6 +104,7 @@ function setup() {
       
       maxUpdates: slider_maxUpdates.value(),
       passangerSpawnMin: input_passangerSpawnMin.value(),
+      passangerSpawnMax: input_passangerSpawnMax.value(),
     },
     function (result) {
       // if successful allow animation
