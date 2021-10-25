@@ -56,24 +56,24 @@ function setup() {
   //Number updates slider
   createCanvas(size, size);
   slider_maxUpdates = createSlider(0, 255, 100); //createSlider(min, max, [value], [step])
-  slider_maxUpdates.position(10, 10);
+  slider_maxUpdates.position(800, 10);
   slider_maxUpdates.style('width', '80px');
 
 
   //Number cars slider
   createCanvas(size, size);
   slider_carNumber = createSlider(0, 255, 100); //createSlider(min, max, [value], [step])
-  slider_carNumber.position(70, 10);
+  slider_carNumber.position(800, 30);
   slider_carNumber.style('width', '80px');
 
   background('grey');
   input_passangerSpawnMin = createInput('');
-  input_passangerSpawnMin.position(0, 0);
+  input_passangerSpawnMin.position(800, 50);
   input_passangerSpawnMin.size(100);
 
   background('grey');
   input_passangerSpawnMax = createInput('');
-  input_passangerSpawnMax.position(0, 0);
+  input_passangerSpawnMax.position(800, 70);
   input_passangerSpawnMax.size(100);
 
 
@@ -186,6 +186,9 @@ function startSimulation(){
       cars: tmpCars.map((c) => {
         return { x: c.x, y: c.y, id: c.id };
       }),
+      maxUpdates: slider_maxUpdates.value(),
+      passangerSpawnMin: Number(input_passangerSpawnMin.value()),
+      passangerSpawnMax: Number(input_passangerSpawnMax.value()),
     },
     function (result) {
       // if successful allow animation
