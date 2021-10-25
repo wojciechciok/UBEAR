@@ -51,7 +51,7 @@ function setup() {
 
 
   // Create Button
-  button = createButton('click me');
+  button = createButton('Start Simulation');
   button.position(0, size + 1);
   button.mousePressed(startSimulation);
 
