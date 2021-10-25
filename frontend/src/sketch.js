@@ -127,3 +127,7 @@ function update(data) {
 function getRandomPosition() {
   return random(road);
 }
+
+function mouseClicked() {
+  return new Car(Object.keys(cars).length + 1, mouseX, mouseY);
+}

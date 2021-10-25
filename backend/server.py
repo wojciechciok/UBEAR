@@ -31,6 +31,8 @@ def prettify(my_dict):
 def init():
     content = request.json
     grid = content["grid"]
+    cache["ticks"] = 0
+    cache["maxTicks"] = content["maxUpdates"]
     cache["grid"] = grid
     cache["valid_positions"] = get_valid_passenger_positions(grid)
     cache["cars"] = list(map(lambda car: Car(car["x"], car["y"], car["id"]), content["cars"]))
@@ -59,7 +61,8 @@ def get_cars_positions():
     def events():
         while True:
             time.sleep(refresh_time)
-            update(cache)
+            if (update(cache)):
+                return 'data: {0}\n\n'.format(json.dumps({'finished': True))
             response = get_passengers_and_cars_json(cache)
             app.logger.warning("update")
             yield 'data: {0}\n\n'.format(response)
