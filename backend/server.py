@@ -61,11 +61,14 @@ def get_cars_positions():
     def events():
         while True:
             time.sleep(refresh_time)
-            if (update(cache)):
-                return 'data: {0}\n\n'.format(json.dumps({'finished': True))
-            response = get_passengers_and_cars_json(cache)
-            app.logger.warning("update")
-            yield 'data: {0}\n\n'.format(response)
+            hasFinished = update(cache)
+            if (hasFinished):
+                yield 'data: {0}\n\n'.format(json.dumps({'finished': True}))
+                break
+            if not hasFinished:
+                response = get_passengers_and_cars_json(cache)
+                app.logger.warning("update")
+                yield 'data: {0}\n\n'.format(response)
 
     return Response(events(), mimetype="text/event-stream")
 

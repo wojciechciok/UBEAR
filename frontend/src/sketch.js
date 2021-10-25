@@ -55,7 +55,7 @@ function setup() {
 
   //Number updates slider
   createCanvas(size, size);
-  slider_maxUpdates = createSlider(0, 255, 100); //createSlider(min, max, [value], [step])
+  slider_maxUpdates = createSlider(0, 255, 10); //createSlider(min, max, [value], [step])
   slider_maxUpdates.position(800, 10);
   slider_maxUpdates.style('width', '80px');
 
@@ -195,6 +195,10 @@ function startSimulation(){
       const evtSource = new EventSource(`${url}/cars/positions`);
       evtSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
+        console.log(data)
+        if (data.finished){
+          alert("Simulation finished")
+        }
         update(data);
       };
     },

@@ -15,9 +15,13 @@ def get_passengers_and_cars_json(cache):
     return json.dumps({'passengers': list(cache['passengers'].values()), 'cars': cache['cars']}, cls=EmployeeEncoder)
 
 def update(cache):
-    cache["ticks"] = cache["ticks"] + 1
+    
     cars = cache["cars"]
     passengers = cache["passengers"]
+
+    if cache["ticks"] >= cache["maxTicks"]:
+        return True
+
     for car in cars:
         if len(car.passengers_list) > 0:
             for passenger_id in car.passengers_list:
@@ -42,11 +46,6 @@ def update(cache):
                 car.passengers_list.append(passenger.id)
                 passenger.car_id = car.id
         
-        if cache["ticks"] == cache["maxUpdates"]:
-            return True
-        else: 
-            return False
-
     
     current_next_passenger_spawn = cache["next_passenger_spawn"]
     if current_next_passenger_spawn == 0:
@@ -56,3 +55,11 @@ def update(cache):
         cache["next_passenger_spawn"] = random.randrange(0, PASSENGER_SPAWN_RANGE)
     else:
         cache["next_passenger_spawn"] -= 1
+
+
+    
+
+    cache["ticks"] = cache["ticks"] + 1
+    return False 
+
+   
