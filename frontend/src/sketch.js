@@ -49,12 +49,10 @@ function setup() {
 
   map.show();
 
-
   // Create Button
-  button = createButton('Start Simulation');
+  button = createButton("Start Simulation");
   button.position(0, size + 1);
   button.mousePressed(startSimulation);
-
 }
 
 function update(data) {
@@ -107,31 +105,30 @@ function getRandomPosition() {
 }
 
 function mouseClicked(event) {
-  if(simulationStarted) return;
+  if (simulationStarted || mouseX >= size || mouseY >= size) return;
   let x = Math.floor(mouseX / cellSize);
   let y = Math.floor(mouseY / cellSize);
-  map.roadConstruction(x,y);
+  map.roadConstruction(x, y);
   map.show();
-
 }
 
-function startSimulation(){
-  for(let x = 0;x < map.grid.length;x++)
-  {
-    for(let y = 0;y < map.grid[x].length;y++) {
-      if(map.grid[x][y]) {
-        road.push([x,y]);
+function startSimulation() {
+  simulationStarted = true;
+  for (let x = 0; x < map.grid.length; x++) {
+    for (let y = 0; y < map.grid[x].length; y++) {
+      if (map.grid[x][y]) {
+        road.push([x, y]);
       }
     }
   }
-    // backend needs 1 when frontend has zeros an vice versa
-    const invertedMap = [];
-    for (let row of map.grid) {
-      invertedMap.push([]);
-      for (let col of row) {
-        invertedMap[invertedMap.length - 1].push(abs(col - 1));
-      } 
+  // backend needs 1 when frontend has zeros an vice versa
+  const invertedMap = [];
+  for (let row of map.grid) {
+    invertedMap.push([]);
+    for (let col of row) {
+      invertedMap[invertedMap.length - 1].push(abs(col - 1));
     }
+  }
 
   // create cars
   const tmpCars = [];

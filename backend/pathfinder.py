@@ -16,6 +16,11 @@ class Node():
         return self.position == other.position
 
 
+# manhattan distance for now
+def heurestic(start, end):
+    return abs(start.position[0] - end.position[0]) + abs(start.position[1] - end.position[1])
+
+
 def astar(maze, start, end, diagonal = False):
     """Returns a list of tuples as a path from the given start to the given end in the given maze"""
 
@@ -85,22 +90,23 @@ def astar(maze, start, end, diagonal = False):
         for child in children:
 
             # Child is on the closed list
-            for closed_child in closed_list:
-                if child == closed_child:
-                    continue
+            if child not in closed_list:
+                tempG = current_node.g + 1
 
-            # Create the f, g, and h values
-            child.g = current_node.g + 1
-            child.h = ((child.position[0] - end_node.position[0]) ** 2) + ((child.position[1] - end_node.position[1]) ** 2)
-            child.f = child.g + child.h
+                # Child is already in the open list
+                if child in open_list:
+                    if tempG < child.g:
+                        child.g = tempG
+                else:
+                    child.g = tempG
+                    open_list.append(child)
 
-            # Child is already in the open list
-            for open_node in open_list:
-                if child == open_node and child.g > open_node.g:
-                    continue
+                # Create the f, g, and h values
+                child.h = heurestic(child, end_node)
+                child.f = child.g + child.h
 
-            # Add the child to the open list
-            open_list.append(child)
+                # Add the child to the open list
+                open_list.append(child)
 
 
 def get_path(x, y, xDest, yDest, grid):
@@ -124,7 +130,6 @@ def get_shortest_path(cars, xDest, yDest, grid):
 
 def get_shortest_path_for_passenger(cars, passenger, grid):
     (x, y, destX, destY) = passenger.x, passenger.y, passenger.x_dest, passenger.y_dest
-    print(len(cars))
     shortest_path, chosen_car = get_shortest_path(cars, x, y, grid)
     path_for_passenger = get_path(x, y, destX, destY, grid)
     shortest_path = shortest_path + path_for_passenger[1:]
