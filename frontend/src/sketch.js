@@ -221,7 +221,6 @@ function startSimulation() {
       const evtSource = new EventSource(`${url}/cars/positions`);
       evtSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log(data)
         if (data.finished){
           alert("Simulation finished");
           evtSource.close();
