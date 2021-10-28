@@ -2,12 +2,12 @@
 let url = " http://localhost:105";
 
 // P5 components
-let slider_maxUpdates;
-let slider_carNumber;
+let sliderMaxUpdates;
+let sliderCarNumber;
 //Passanger spawn minimum
 
-let input_passangerSpawnMin;
-let input_passangerSpawnMax;
+let inputPassangerSpawnMin;
+let inputPassangerSpawnMax;
 
 
 // size of the map (width and height)
@@ -54,47 +54,45 @@ function preload() {
 
 var paragraphCarNumber;
 var paragraphMaxUpdates;
-var ejemplo;
-var variable;
-var variable2;
+var carSliderValue;
+var updatesSliderValue;
 
 
 function setup() {
-  /*
-  noCanvas();
-  paragraph = createP('example');
-  input = createInput('input');
-  slider = createSlider(10, 64, 16);*/
 
   //Number updates slider
   
   createCanvas(size, size);
   paragraphMaxUpdates = createP('Max Updates');
   paragraphMaxUpdates.position(800,0);
-  slider_maxUpdates = createSlider(0, 255, 100); //createSlider(min, max, [value], [step])
-  slider_maxUpdates.position(900, 16);
-  slider_maxUpdates.style('width', '80px');
+  sliderMaxUpdates = createSlider(0, 255, 100); //createSlider(min, max, [value], [step])
+  sliderMaxUpdates.position(900, 16);
+  sliderMaxUpdates.style('width', '80px');
+  updatesSliderValue = createP(sliderMaxUpdates.value())
+  updatesSliderValue.position(1000,0)
 
 
   //Number cars slider
   createCanvas(size, size);
   paragraphCarNumber = createP('Car Number');
   paragraphCarNumber.position(800,20);
-  slider_carNumber = createSlider(0, 255, 100); //createSlider(min, max, [value], [step])
-  slider_carNumber.position(900, 36);
-  slider_carNumber.style('width', '80px');
+  sliderCarNumber = createSlider(0, 255, 100); //createSlider(min, max, [value], [step])
+  sliderCarNumber.position(900, 36);
+  sliderCarNumber.style('width', '80px');
+  carSliderValue = createP(sliderCarNumber.value())
+  carSliderValue.position(1000,16)
  
 
   background('grey');
-  input_passangerSpawnMin = createInput('Passanger Spawn min');
-  input_passangerSpawnMin.position(800, 70);
-  input_passangerSpawnMin.size(150);
+  inputPassangerSpawnMin = createInput('Passanger Spawn min');
+  inputPassangerSpawnMin.position(800, 70);
+  inputPassangerSpawnMin.size(150);
  
 
   background('grey');
-  input_passangerSpawnMax = createInput('Passanger Spawn max');
-  input_passangerSpawnMax.position(800, 90);
-  input_passangerSpawnMax.size(150);
+  inputPassangerSpawnMax = createInput('Passanger Spawn max');
+  inputPassangerSpawnMax.position(800, 90);
+  inputPassangerSpawnMax.size(150);
 
 
  
@@ -111,10 +109,10 @@ function setup() {
   button.mousePressed(startSimulation);
 }
 
-/*function draw(){
-  let ejemplo = createP(slider_carNumber.value())
-  ejemplo.position(1000,36)
-}*/
+function draw(){
+  carSliderValue.html(sliderCarNumber.value())
+  updatesSliderValue.html(sliderMaxUpdates.value())
+}
 
 function update(data) {
   // extract data
@@ -208,9 +206,9 @@ function startSimulation() {
       cars: tmpCars.map((c) => {
         return { x: c.x, y: c.y, id: c.id };
       }),
-      maxUpdates: slider_maxUpdates.value(),
-      passangerSpawnMin: Number(input_passangerSpawnMin.value()),
-      passangerSpawnMax: Number(input_passangerSpawnMax.value()),
+      maxUpdates: sliderMaxUpdates.value(),
+      passangerSpawnMin: Number(inputPassangerSpawnMin.value()),
+      passangerSpawnMax: Number(inputPassangerSpawnMax.value()),
       
 
      
