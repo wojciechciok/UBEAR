@@ -18,7 +18,7 @@ const cellSize = size / cellNum;
 let map;
 // global object of cars see Car.js
 let cars = {};
-const carsIDs = [];
+let carsIDs = [];
 // global object of passengers see Passenger.js
 let passengers = {};
 let passengersIDs = [];
@@ -126,10 +126,18 @@ function mouseClicked(event) {
     case "Road Construction":
       map.roadConstruction(x, y);
       map.show();
+      for(c in cars){
+
+        if(cars[c].x == x && cars[c].y == y){
+          delete cars[c];
+        } else {
+          cars[c].show();
+        }
+      }
       break;
 
     case "Taxi Placement":
-      let taxiID = Object.keys(cars).length;
+      let taxiID = carsIDs.length;
 
       if(map.grid[x][y] != true) break;
       cars[taxiID] = placeTaxi(taxiID, x, y);
@@ -152,6 +160,14 @@ function startSimulation() {
         road.push([x, y]);
       }
     }
+  }
+
+  carsIDs = [];
+  tmpCars = [];
+  for (c in cars){
+    carsIDs.push(cars[c].id);
+    tmpCars.push(cars[c])
+          
   }
   // backend needs 1 when frontend has zeros an vice versa
   const invertedMap = [];
