@@ -26,6 +26,7 @@ class Map {
     }
   }
   roadConstruction(x, y){
+    console.log(this.grid[x][y])
     this.grid[x][y] = !this.grid[x][y]
   }
 }

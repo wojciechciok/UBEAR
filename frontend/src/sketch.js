@@ -65,7 +65,6 @@ function setup() {
   radioBtn.option('Road Construction');
   radioBtn.option('Taxi Placement');
   radioBtn.style("width", "150px")
-  console.log(button.position()["y"])
   radioBtn.position(0, button.position()["y"] + 24)
 }
 
@@ -131,6 +130,8 @@ function mouseClicked(event) {
 
     case "Taxi Placement":
       let taxiID = Object.keys(cars).length;
+
+      if(map.grid[x][y] != true) break;
       cars[taxiID] = placeTaxi(taxiID, x, y);
       carsIDs.push(taxiID);
       tmpCars.push(cars[taxiID]);
