@@ -51,30 +51,50 @@ function preload() {
 }
 
 // setup - this function is called once at the beginning of the program
+
+var paragraphCarNumber;
+var paragraphMaxUpdates;
+var ejemplo;
+var variable;
+var variable2;
+
+
 function setup() {
+  /*
+  noCanvas();
+  paragraph = createP('example');
+  input = createInput('input');
+  slider = createSlider(10, 64, 16);*/
 
   //Number updates slider
+  
   createCanvas(size, size);
+  paragraphMaxUpdates = createP('Max Updates');
+  paragraphMaxUpdates.position(800,0);
   slider_maxUpdates = createSlider(0, 255, 100); //createSlider(min, max, [value], [step])
-  slider_maxUpdates.position(800, 10);
+  slider_maxUpdates.position(900, 16);
   slider_maxUpdates.style('width', '80px');
 
 
   //Number cars slider
   createCanvas(size, size);
+  paragraphCarNumber = createP('Car Number');
+  paragraphCarNumber.position(800,20);
   slider_carNumber = createSlider(0, 255, 100); //createSlider(min, max, [value], [step])
-  slider_carNumber.position(800, 30);
+  slider_carNumber.position(900, 36);
   slider_carNumber.style('width', '80px');
+ 
 
   background('grey');
-  input_passangerSpawnMin = createInput('');
-  input_passangerSpawnMin.position(800, 50);
-  input_passangerSpawnMin.size(100);
+  input_passangerSpawnMin = createInput('Passanger Spawn min');
+  input_passangerSpawnMin.position(800, 70);
+  input_passangerSpawnMin.size(150);
+ 
 
   background('grey');
-  input_passangerSpawnMax = createInput('');
-  input_passangerSpawnMax.position(800, 70);
-  input_passangerSpawnMax.size(100);
+  input_passangerSpawnMax = createInput('Passanger Spawn max');
+  input_passangerSpawnMax.position(800, 90);
+  input_passangerSpawnMax.size(150);
 
 
  
@@ -92,6 +112,11 @@ function setup() {
   button.mousePressed(startSimulation);
 
 }
+
+/*function draw(){
+  let ejemplo = createP(slider_carNumber.value())
+  ejemplo.position(1000,36)
+}*/
 
 function update(data) {
   // extract data
@@ -189,6 +214,10 @@ function startSimulation(){
       maxUpdates: slider_maxUpdates.value(),
       passangerSpawnMin: Number(input_passangerSpawnMin.value()),
       passangerSpawnMax: Number(input_passangerSpawnMax.value()),
+      
+
+     
+      
     },
     function (result) {
       // if successful allow animation
