@@ -5,6 +5,7 @@ class Car {
       this.x = pos[0];
       this.y = pos[1];
     } else {
+      this.id = id;
       this.x = x;
       this.y = y;
     }

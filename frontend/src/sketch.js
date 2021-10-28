@@ -25,12 +25,18 @@ let passengersIDs = [];
 // helper array of cells which are road
 let road = [];
 
+// Taxis
+let tmpCars = [];
+
 // vars for images
 let carImg;
 let passengerImg;
 
 // Start Button
 let button;
+
+// Road Construction, Taxi radio
+let radioBtn;
 
 // Simuation Started flag
 let simulationStarted = false;
@@ -53,6 +59,14 @@ function setup() {
   button = createButton("Start Simulation");
   button.position(0, size + 1);
   button.mousePressed(startSimulation);
+
+  // Create Radio Buttons
+  radioBtn = createRadio();
+  radioBtn.option('Road Construction');
+  radioBtn.option('Taxi Placement');
+  radioBtn.style("width", "150px")
+  console.log(button.position()["y"])
+  radioBtn.position(0, button.position()["y"] + 24)
 }
 
 function update(data) {
@@ -108,8 +122,25 @@ function mouseClicked(event) {
   if (simulationStarted || mouseX >= size || mouseY >= size) return;
   let x = Math.floor(mouseX / cellSize);
   let y = Math.floor(mouseY / cellSize);
-  map.roadConstruction(x, y);
-  map.show();
+  let v = radioBtn.value();
+  switch(v){
+    case "Road Construction":
+      map.roadConstruction(x, y);
+      map.show();
+      break;
+
+    case "Taxi Placement":
+      let taxiID = Object.keys(cars).length;
+      cars[taxiID] = placeTaxi(taxiID, x, y);
+      carsIDs.push(taxiID);
+      tmpCars.push(cars[taxiID]);
+      cars[taxiID].show();
+      break;
+  }
+}
+
+function placeTaxi(id, x, y){
+  return new Car(id, x, y);
 }
 
 function startSimulation() {
@@ -131,12 +162,12 @@ function startSimulation() {
   }
 
   // create cars
-  const tmpCars = [];
-  for (let i = 0; i < carsNumber; i++) {
-    cars[i] = new Car(i);
-    carsIDs.push(i);
-    tmpCars.push(cars[i]);
-  }
+  // const tmpCars = [];
+  // for (let i = 0; i < carsNumber; i++) {
+  //   cars[i] = new Car(i);
+  //   carsIDs.push(i);
+  //   tmpCars.push(cars[i]);
+  // }
 
   // send the map to the backend
   httpPost(
