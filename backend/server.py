@@ -59,16 +59,15 @@ def get_cars_positions():
     time_wait_range = 2
     refresh_time = FRAME_RATE
     def events():
-        hasFinished = False
-        while not hasFinished:
+        has_finished = False
+        while not has_finished:
             time.sleep(refresh_time)
-            hasFinished = update(cache)
-            if hasFinished:
+            has_finished = update(cache)
+            if has_finished:
                 yield 'data: {0}\n\n'.format(json.dumps({'finished': True, 'metrics': {}}))
                 break
-            if not hasFinished:
+            if not has_finished:
                 response = get_passengers_and_cars_json(cache)
-                app.logger.warning("update")
                 yield 'data: {0}\n\n'.format(response)
 
     return Response(events(), mimetype="text/event-stream")
