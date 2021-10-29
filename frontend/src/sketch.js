@@ -27,12 +27,15 @@ const cellSize = size / cellNum;
 let map;
 // global object of cars see Car.js
 let cars = {};
-const carsIDs = [];
+let carsIDs = [];
 // global object of passengers see Passenger.js
 let passengers = {};
 let passengersIDs = [];
 // helper array of cells which are road
 let road = [];
+
+// Taxis
+let tmpCars = [];
 
 // vars for images
 let carImg;
@@ -40,6 +43,9 @@ let passengerImg;
 
 // Start Button
 let button;
+
+// Road Construction, Taxi radio
+let radioBtn;
 
 // Simuation Started flag
 let simulationStarted = false;
@@ -83,6 +89,13 @@ function setup() {
   button = createButton("Start Simulation");
   button.position(0, size + 1);
   button.mousePressed(startSimulation);
+
+  // Create Radio Buttons
+  radioBtn = createRadio();
+  radioBtn.option('Road Construction');
+  radioBtn.option('Taxi Placement');
+  radioBtn.style("width", "150px")
+  radioBtn.position(0, button.position()["y"] + 24)
 }
 
 function draw(){
@@ -142,8 +155,35 @@ function mouseClicked(event) {
   if (simulationStarted || mouseX >= size || mouseY >= size) return;
   let x = Math.floor(mouseX / cellSize);
   let y = Math.floor(mouseY / cellSize);
-  map.roadConstruction(x, y);
-  map.show();
+  let v = radioBtn.value();
+  switch(v){
+    case "Road Construction":
+      map.roadConstruction(x, y);
+      map.show();
+      for(c in cars){
+
+        if(cars[c].x == x && cars[c].y == y){
+          delete cars[c];
+        } else {
+          cars[c].show();
+        }
+      }
+      break;
+
+    case "Taxi Placement":
+      let taxiID = carsIDs.length;
+
+      if(map.grid[x][y] != true) break;
+      cars[taxiID] = placeTaxi(taxiID, x, y);
+      carsIDs.push(taxiID);
+      tmpCars.push(cars[taxiID]);
+      cars[taxiID].show();
+      break;
+  }
+}
+
+function placeTaxi(id, x, y){
+  return new Car(id, x, y);
 }
 
 function startSimulation() {
@@ -155,6 +195,14 @@ function startSimulation() {
       }
     }
   }
+
+  carsIDs = [];
+  tmpCars = [];
+  for (c in cars){
+    carsIDs.push(cars[c].id);
+    tmpCars.push(cars[c])
+          
+  }
   // backend needs 1 when frontend has zeros an vice versa
   const invertedMap = [];
   for (let row of map.grid) {
@@ -165,12 +213,12 @@ function startSimulation() {
   }
 
   // create cars
-  const tmpCars = [];
-  for (let i = 0; i < carsNumber; i++) {
-    cars[i] = new Car(i);
-    carsIDs.push(i);
-    tmpCars.push(cars[i]);
-  }
+  // const tmpCars = [];
+  // for (let i = 0; i < carsNumber; i++) {
+  //   cars[i] = new Car(i);
+  //   carsIDs.push(i);
+  //   tmpCars.push(cars[i]);
+  // }
 
   // send the map to the backend
   httpPost(
