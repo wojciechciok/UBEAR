@@ -55,21 +55,17 @@ function preload() {
 
 var paragraphMaxUpdates;
 
-
 function setup() {
-
   //Number updates slider
-  
-  createCanvas(size, size);
-  paragraphMaxUpdates = createP('Max Updates');
-  paragraphMaxUpdates.position(800,0);
-  inputMaxUpdates = createInput(''); //createSlider(min, max, [value], [step])
-  inputMaxUpdates.position(900, 16);
-  inputMaxUpdates.style('width', '80px');
 
+  createCanvas(size, size);
+  paragraphMaxUpdates = createP("Max Updates");
+  paragraphMaxUpdates.position(800, 0);
+  inputMaxUpdates = createInput(""); //createSlider(min, max, [value], [step])
+  inputMaxUpdates.position(900, 16);
+  inputMaxUpdates.style("width", "80px");
 
   // initialize map
-
 
   map = new Map(cellNum);
 
@@ -82,10 +78,10 @@ function setup() {
 
   // Create Radio Buttons
   radioBtn = createRadio();
-  radioBtn.option('Road Construction');
-  radioBtn.option('Taxi Placement');
-  radioBtn.style("width", "150px")
-  radioBtn.position(0, button.position()["y"] + 24)
+  radioBtn.option("Road Construction");
+  radioBtn.option("Taxi Placement");
+  radioBtn.style("width", "150px");
+  radioBtn.position(0, button.position()["y"] + 24);
 }
 
 function update(data) {
@@ -142,13 +138,12 @@ function mouseClicked(event) {
   let x = Math.floor(mouseX / cellSize);
   let y = Math.floor(mouseY / cellSize);
   let v = radioBtn.value();
-  switch(v){
+  switch (v) {
     case "Road Construction":
       map.roadConstruction(x, y);
       map.show();
-      for(c in cars){
-
-        if(cars[c].x == x && cars[c].y == y){
+      for (c in cars) {
+        if (cars[c].x == x && cars[c].y == y) {
           delete cars[c];
         } else {
           cars[c].show();
@@ -159,7 +154,7 @@ function mouseClicked(event) {
     case "Taxi Placement":
       let taxiID = carsIDs.length;
 
-      if(map.grid[x][y] != true) break;
+      if (map.grid[x][y] != true) break;
       cars[taxiID] = placeTaxi(taxiID, x, y);
       carsIDs.push(taxiID);
       tmpCars.push(cars[taxiID]);
@@ -168,7 +163,7 @@ function mouseClicked(event) {
   }
 }
 
-function placeTaxi(id, x, y){
+function placeTaxi(id, x, y) {
   return new Car(id, x, y);
 }
 
@@ -184,10 +179,9 @@ function startSimulation() {
 
   carsIDs = [];
   tmpCars = [];
-  for (c in cars){
+  for (c in cars) {
     carsIDs.push(cars[c].id);
-    tmpCars.push(cars[c])
-          
+    tmpCars.push(cars[c]);
   }
   // backend needs 1 when frontend has zeros an vice versa
   const invertedMap = [];
@@ -216,18 +210,18 @@ function startSimulation() {
         return { x: c.x, y: c.y, id: c.id };
       }),
       maxUpdates: int(inputMaxUpdates.value()),
-      
     },
     function (result) {
       // if successful allow animation
       const evtSource = new EventSource(`${url}/cars/positions`);
       evtSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        if (data.finished){
+        if (data.finished) {
           alert("Simulation finished");
           evtSource.close();
+        } else {
+          update(data);
         }
-        update(data);
       };
     },
     function (error) {
