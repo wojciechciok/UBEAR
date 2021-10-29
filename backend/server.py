@@ -9,6 +9,7 @@ from car import Car
 import time
 import uuid
 from random import Random
+import threading
 
 # in seconds
 FRAME_RATE = 1 / 5
@@ -28,14 +29,13 @@ global_cache = {}
 def prettify(my_dict):
     return json.dumps(my_dict, indent=4, sort_keys=True)
 
-@app.route('/init', methods=['POST'])
-def init():
-    content = request.json
+
+def init_single(content):
     grid = content["grid"]
     cache = {}
     cache["ticks"] = 0
     max_updates = content["maxUpdates"]
-    cache["maxTicks"] = max_updates if max_updates is not None else 420
+    cache["maxTicks"] = max_updates if max_updates is not None else 1000
     cache["grid"] = grid
     cache["valid_positions"] = get_valid_passenger_positions(grid)
     cache["cars"] = list(map(lambda car: Car(car["x"], car["y"], car["id"]), content["cars"]))
@@ -44,9 +44,20 @@ def init():
     random = Random()
     random.seed(42)
     cache["random"] = random
-    guid = str(uuid.uuid4())
-    global_cache[guid] = cache
-    return jsonify({'guid': guid})
+    cache["guid"] = str(uuid.uuid4())
+    return cache
+
+
+@app.route('/init', methods=['POST'])
+def init():
+    content = request.json
+    if "no_visualization" in content and content["no_visualization"]:
+        return no_visualization(content)
+    else:
+        cache = init_single(content)
+        guid = cache["guid"]
+        global_cache[guid] = cache
+        return jsonify({'guid': guid})
 
 
 @app.route('/cars/positions/<guid>', methods=['GET'])
@@ -57,7 +68,6 @@ def get_cars_positions(guid):
     # todo: every 10-15 seconds e.g.
     if not 'grid' in cache or 'cars' not in cache:
         return f"Simulation with guid: {guid} Not initialized"
-    time_wait_range = 2
     refresh_time = FRAME_RATE
     def events():
         has_finished = False
@@ -73,6 +83,26 @@ def get_cars_positions(guid):
 
     return Response(events(), mimetype="text/event-stream")
 
+
+def no_visualization(content):
+    data = request.get_json()
+    number_of_simulations = content['number_of_simulations'] if 'number_of_simulations' in content else 10
+    def simulate_single(**kwargs):
+        has_finished = False
+        cache = kwargs.get("cache")
+        while not has_finished:
+            has_finished = update(cache)
+            if has_finished:
+                print(f'Finished, guid: {cache["guid"]}')
+                return json.dumps({'finished': True, 'metrics': {}})
+    threads_list = []
+    for i in range(0, number_of_simulations):
+        cache = init_single(content)
+        print(f'Started, guid: {cache["guid"]}')
+        thread = threading.Thread(target=simulate_single, kwargs={"cache": cache})
+        thread.start()
+
+    return {"message": "Accepted"}, 202
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=105)
