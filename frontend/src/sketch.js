@@ -212,8 +212,9 @@ function startSimulation() {
       maxUpdates: int(inputMaxUpdates.value()),
     },
     function (result) {
+      let guid = result.guid;
       // if successful allow animation
-      const evtSource = new EventSource(`${url}/cars/positions`);
+      const evtSource = new EventSource(`${url}/cars/positions/${guid}`);
       evtSource.onmessage = (event) => {
         const data = JSON.parse(event.data);
         if (data.finished) {
