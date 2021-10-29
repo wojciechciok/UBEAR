@@ -2,14 +2,12 @@ from flask import Flask, jsonify, request, Response
 from flask_cors import CORS
 # from flask_caching import Cache
 import json
-# from pathfinder import get_shortest_path_for_passenger
-from passenger import get_valid_passenger_positions
 from map_helpers import update, get_passengers_and_cars_json
-from car import Car
 import time
 import uuid
 from random import Random
 import threading
+from simulation_threads import thread_creator, init_single
 
 # in seconds
 FRAME_RATE = 1 / 5
@@ -28,24 +26,6 @@ CORS(app)
 global_cache = {}
 def prettify(my_dict):
     return json.dumps(my_dict, indent=4, sort_keys=True)
-
-
-def init_single(content):
-    grid = content["grid"]
-    cache = {}
-    cache["ticks"] = 0
-    max_updates = content["maxUpdates"]
-    cache["maxTicks"] = max_updates if max_updates is not None else 1000
-    cache["grid"] = grid
-    cache["valid_positions"] = get_valid_passenger_positions(grid)
-    cache["cars"] = list(map(lambda car: Car(car["x"], car["y"], car["id"]), content["cars"]))
-    cache["passengers"] = {}
-    cache["next_passenger_spawn"] = 0
-    random = Random()
-    random.seed(42)
-    cache["random"] = random
-    cache["guid"] = str(uuid.uuid4())
-    return cache
 
 
 @app.route('/init', methods=['POST'])
@@ -87,20 +67,9 @@ def get_cars_positions(guid):
 def no_visualization(content):
     data = request.get_json()
     number_of_simulations = content['number_of_simulations'] if 'number_of_simulations' in content else 10
-    def simulate_single(**kwargs):
-        has_finished = False
-        cache = kwargs.get("cache")
-        while not has_finished:
-            has_finished = update(cache)
-            if has_finished:
-                print(f'Finished, guid: {cache["guid"]}')
-                return json.dumps({'finished': True, 'metrics': {}})
     threads_list = []
-    for i in range(0, number_of_simulations):
-        cache = init_single(content)
-        print(f'Started, guid: {cache["guid"]}')
-        thread = threading.Thread(target=simulate_single, kwargs={"cache": cache})
-        thread.start()
+    main_thread = threading.Thread(target=thread_creator, args=(number_of_simulations, content))
+    main_thread.start()
 
     return {"message": "Accepted"}, 202
 
