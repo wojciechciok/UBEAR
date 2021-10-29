@@ -2,13 +2,8 @@
 let url = " http://localhost:105";
 
 // P5 components
-let sliderMaxUpdates;
-let sliderCarNumber;
+let inputMaxUpdates;
 //Passanger spawn minimum
-
-let inputPassangerSpawnMin;
-let inputPassangerSpawnMax;
-
 
 // size of the map (width and height)
 const size = 700;
@@ -58,10 +53,7 @@ function preload() {
 
 // setup - this function is called once at the beginning of the program
 
-var paragraphCarNumber;
 var paragraphMaxUpdates;
-var carSliderValue;
-var updatesSliderValue;
 
 
 function setup() {
@@ -71,13 +63,11 @@ function setup() {
   createCanvas(size, size);
   paragraphMaxUpdates = createP('Max Updates');
   paragraphMaxUpdates.position(800,0);
-  sliderMaxUpdates = createSlider(0, 255, 100); //createSlider(min, max, [value], [step])
-  sliderMaxUpdates.position(900, 16);
-  sliderMaxUpdates.style('width', '80px');
-  updatesSliderValue = createP(sliderMaxUpdates.value())
-  updatesSliderValue.position(1000,0)
+  inputMaxUpdates = createInput(''); //createSlider(min, max, [value], [step])
+  inputMaxUpdates.position(900, 16);
+  inputMaxUpdates.style('width', '80px');
 
- 
+
   // initialize map
 
 
@@ -96,10 +86,6 @@ function setup() {
   radioBtn.option('Taxi Placement');
   radioBtn.style("width", "150px")
   radioBtn.position(0, button.position()["y"] + 24)
-}
-
-function draw(){
-  updatesSliderValue.html(sliderMaxUpdates.value())
 }
 
 function update(data) {
@@ -229,7 +215,7 @@ function startSimulation() {
       cars: tmpCars.map((c) => {
         return { x: c.x, y: c.y, id: c.id };
       }),
-      maxUpdates: sliderMaxUpdates.value(),
+      maxUpdates: int(inputMaxUpdates.value()),
       
     },
     function (result) {
