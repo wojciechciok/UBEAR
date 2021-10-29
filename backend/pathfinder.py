@@ -118,7 +118,7 @@ def get_path(x, y, xDest, yDest, grid):
 
 def get_shortest_path(cars, xDest, yDest, grid):
     min_len = -1
-    # cars are sorted here, so that there is no amiguity to what car has been chosen (for simulation purposes)
+    # cars are sorted here, so that there is no ambiguity to what car has been chosen (for simulation purposes)
     for car in sorted(cars, key=lambda car: car.id):
         path = get_path(car.x, car.y, xDest, yDest, grid)
         path_len = get_path_length(path)
