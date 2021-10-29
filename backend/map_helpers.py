@@ -49,10 +49,9 @@ def update(cache):
     
     current_next_passenger_spawn = cache["next_passenger_spawn"]
     if current_next_passenger_spawn == 0:
-        # random.seed(42)
-        new_passenger = Passenger(cache["valid_positions"])
+        new_passenger = Passenger(cache["valid_positions"], cache["random"])
         cache["passengers"][new_passenger.id] = new_passenger
-        cache["next_passenger_spawn"] = random.randrange(0, PASSENGER_SPAWN_RANGE)
+        cache["next_passenger_spawn"] = cache["random"].randrange(0, PASSENGER_SPAWN_RANGE)
     else:
         cache["next_passenger_spawn"] -= 1
 

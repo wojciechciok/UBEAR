@@ -1,10 +1,9 @@
 import uuid
-import random
 
 class Passenger:
-    def __init__(self, valid_positions):
-        (x, y) = get_valid_passenger_position(valid_positions)
-        (x_dest, y_dest) = get_valid_passenger_position(valid_positions)
+    def __init__(self, valid_positions, random):
+        (x, y) = get_valid_passenger_position(valid_positions, random)
+        (x_dest, y_dest) = get_valid_passenger_position(valid_positions, random)
         self.x = x
         self.y = y
         self.x_dest = x_dest
@@ -13,8 +12,7 @@ class Passenger:
         self.id = str(uuid.uuid4())
         self.is_in_car = False
 
-def get_valid_passenger_position(valid_positions):
-    # random.seed(42)
+def get_valid_passenger_position(valid_positions, random):
     return random.choice(valid_positions)
 
 

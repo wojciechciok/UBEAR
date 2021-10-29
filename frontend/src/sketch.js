@@ -42,6 +42,9 @@ let button;
 // Road Construction, Taxi radio
 let radioBtn;
 
+// if checked, simulation will be performed without visualization (as fast as possible)
+let noVisualizationCheckBox;
+
 // Simuation Started flag
 let simulationStarted = false;
 
@@ -82,6 +85,9 @@ function setup() {
   radioBtn.option("Taxi Placement");
   radioBtn.style("width", "150px");
   radioBtn.position(0, button.position()["y"] + 24);
+
+  noVisualizationCheckBox = createCheckbox("No visualization", false);
+  noVisualizationCheckBox.position(0, radioBtn.position()["y"] + 40);
 }
 
 function update(data) {
@@ -210,19 +216,23 @@ function startSimulation() {
         return { x: c.x, y: c.y, id: c.id };
       }),
       maxUpdates: int(inputMaxUpdates.value()),
+      no_visualization: noVisualizationCheckBox.checked()
     },
     function (result) {
-      // if successful allow animation
-      const evtSource = new EventSource(`${url}/cars/positions`);
-      evtSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        if (data.finished) {
-          alert("Simulation finished");
-          evtSource.close();
-        } else {
-          update(data);
-        }
-      };
+      if (!noVisualizationCheckBox.checked()){
+        let guid = result.guid;
+        // if successful allow animation
+        const evtSource = new EventSource(`${url}/cars/positions/${guid}`);
+        evtSource.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          if (data.finished) {
+            alert("Simulation finished");
+            evtSource.close();
+          } else {
+            update(data);
+          }
+        };
+      }
     },
     function (error) {
       console.log(error);
