@@ -4,6 +4,11 @@ let url = " http://localhost:105";
 // P5 components
 let inputMaxUpdates;
 //Passanger spawn minimum
+var paragraphPassSpawnMin;
+var inputPassSpawnMin;
+//Passanger spawn maximum
+var paragraphPassSpawnMin;
+var inputPassSpawnMin;
 
 // size of the map (width and height)
 const size = 700;
@@ -67,6 +72,23 @@ function setup() {
   inputMaxUpdates = createInput(""); //createSlider(min, max, [value], [step])
   inputMaxUpdates.position(900, 16);
   inputMaxUpdates.style("width", "80px");
+
+  //Minimum interval time for passanger spawning
+
+  paragraphPassSpawnMin = createP("Minimum value for passenger spawning interval")
+  paragraphPassSpawnMin.position(800, 30);
+  inputPassSpawnMin = createInput("");
+  inputPassSpawnMin.position(1120, 44);
+  inputPassSpawnMin.style("width", "80px");
+ 
+
+  //Maximum interval time for passanger spawning
+
+  paragraphPassSpawnMax = createP("Maximum value for passenger spawning interval")
+  paragraphPassSpawnMax.position(800, 60);
+  inputPassSpawnMax = createInput("");
+  inputPassSpawnMax.position(1120, 74);
+  inputPassSpawnMax.style("width", "80px");
 
   // initialize map
 
@@ -216,7 +238,10 @@ function startSimulation() {
         return { x: c.x, y: c.y, id: c.id };
       }),
       maxUpdates: int(inputMaxUpdates.value()),
-      no_visualization: noVisualizationCheckBox.checked()
+      no_visualization: noVisualizationCheckBox.checked(),
+      minPassSpawn: int(inputPassSpawnMin.value()),
+      maxPassSpawn: int(inputPassSpawnMax.value())
+      
     },
     function (result) {
       if (!noVisualizationCheckBox.checked()){
