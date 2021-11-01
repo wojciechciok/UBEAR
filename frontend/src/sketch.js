@@ -4,11 +4,11 @@ let url = " http://localhost:105";
 // P5 components
 let inputMaxUpdates;
 //Passanger spawn minimum
-var paragraphPassSpawnMin;
-var inputPassSpawnMin;
+let paragraphPassSpawnMin;
+let inputPassSpawnMin;
 //Passanger spawn maximum
-var paragraphPassSpawnMin;
-var inputPassSpawnMin;
+let paragraphPassSpawnMin;
+let inputPassSpawnMin;
 
 // size of the map (width and height)
 const size = 700;
@@ -61,7 +61,7 @@ function preload() {
 
 // setup - this function is called once at the beginning of the program
 
-var paragraphMaxUpdates;
+let paragraphMaxUpdates;
 
 function setup() {
   //Number updates slider
