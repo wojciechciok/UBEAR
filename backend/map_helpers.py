@@ -51,7 +51,7 @@ def update(cache):
     if current_next_passenger_spawn == 0:
         new_passenger = Passenger(cache["valid_positions"], cache["random"])
         cache["passengers"][new_passenger.id] = new_passenger
-        cache["next_passenger_spawn"] = cache["random"].randrange(0, PASSENGER_SPAWN_RANGE)
+        cache["next_passenger_spawn"] = cache["random"].randrange(cache["min_pass_spawn"], cache["max_pass_spawn"])
     else:
         cache["next_passenger_spawn"] -= 1
 

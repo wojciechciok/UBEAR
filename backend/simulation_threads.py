@@ -36,6 +36,9 @@ def init_single(content):
     random.seed(42)
     cache["random"] = random
     cache["guid"] = str(uuid4())
+    cache["min_pass_spawn"] = content["minPassSpawn"]
+    cache["max_pass_spawn"] = content["maxPassSpawn"]
+
     return cache
 
 def simulate_single(cache, results):
