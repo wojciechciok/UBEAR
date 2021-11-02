@@ -69,7 +69,7 @@ function setup() {
   createCanvas(size, size);
   paragraphMaxUpdates = createP("Max Updates");
   paragraphMaxUpdates.position(800, 0);
-  inputMaxUpdates = createInput(""); //createSlider(min, max, [value], [step])
+  inputMaxUpdates = createInput("50"); //createSlider(min, max, [value], [step])
   inputMaxUpdates.position(900, 16);
   inputMaxUpdates.style("width", "80px");
 
@@ -79,7 +79,7 @@ function setup() {
     "Minimum value for passenger spawning interval"
   );
   paragraphPassSpawnMin.position(800, 30);
-  inputPassSpawnMin = createInput("");
+  inputPassSpawnMin = createInput("1");
   inputPassSpawnMin.position(1120, 44);
   inputPassSpawnMin.style("width", "80px");
 
@@ -89,7 +89,7 @@ function setup() {
     "Maximum value for passenger spawning interval"
   );
   paragraphPassSpawnMax.position(800, 60);
-  inputPassSpawnMax = createInput("");
+  inputPassSpawnMax = createInput("10");
   inputPassSpawnMax.position(1120, 74);
   inputPassSpawnMax.style("width", "80px");
 
