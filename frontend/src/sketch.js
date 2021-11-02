@@ -7,8 +7,8 @@ let inputMaxUpdates;
 let paragraphPassSpawnMin;
 let inputPassSpawnMin;
 //Passanger spawn maximum
-let paragraphPassSpawnMin;
-let inputPassSpawnMin;
+let paragraphPassSpawnMax;
+let inputPassSpawnMax;
 
 // size of the map (width and height)
 const size = 700;
@@ -69,24 +69,27 @@ function setup() {
   createCanvas(size, size);
   paragraphMaxUpdates = createP("Max Updates");
   paragraphMaxUpdates.position(800, 0);
-  inputMaxUpdates = createInput(""); //createSlider(min, max, [value], [step])
+  inputMaxUpdates = createInput("50"); //createSlider(min, max, [value], [step])
   inputMaxUpdates.position(900, 16);
   inputMaxUpdates.style("width", "80px");
 
   //Minimum interval time for passanger spawning
 
-  paragraphPassSpawnMin = createP("Minimum value for passenger spawning interval")
+  paragraphPassSpawnMin = createP(
+    "Minimum value for passenger spawning interval"
+  );
   paragraphPassSpawnMin.position(800, 30);
-  inputPassSpawnMin = createInput("");
+  inputPassSpawnMin = createInput("1");
   inputPassSpawnMin.position(1120, 44);
   inputPassSpawnMin.style("width", "80px");
- 
 
   //Maximum interval time for passanger spawning
 
-  paragraphPassSpawnMax = createP("Maximum value for passenger spawning interval")
+  paragraphPassSpawnMax = createP(
+    "Maximum value for passenger spawning interval"
+  );
   paragraphPassSpawnMax.position(800, 60);
-  inputPassSpawnMax = createInput("");
+  inputPassSpawnMax = createInput("10");
   inputPassSpawnMax.position(1120, 74);
   inputPassSpawnMax.style("width", "80px");
 
@@ -240,11 +243,10 @@ function startSimulation() {
       maxUpdates: int(inputMaxUpdates.value()),
       no_visualization: noVisualizationCheckBox.checked(),
       minPassSpawn: int(inputPassSpawnMin.value()),
-      maxPassSpawn: int(inputPassSpawnMax.value())
-      
+      maxPassSpawn: int(inputPassSpawnMax.value()),
     },
     function (result) {
-      if (!noVisualizationCheckBox.checked()){
+      if (!noVisualizationCheckBox.checked()) {
         let guid = result.guid;
         // if successful allow animation
         const evtSource = new EventSource(`${url}/cars/positions/${guid}`);
