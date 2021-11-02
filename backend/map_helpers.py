@@ -7,20 +7,28 @@ from json import JSONEncoder
 # random 0-10 ticks
 PASSENGER_SPAWN_RANGE = 10
 
+
 class EmployeeEncoder(JSONEncoder):
-        def default(self, o):
-            return o.__dict__
+    def default(self, o):
+        return o.__dict__
+
 
 def get_passengers_and_cars_json(cache):
     return json.dumps({'passengers': list(cache['passengers'].values()), 'cars': cache['cars']}, cls=EmployeeEncoder)
 
+
 def update(cache):
-    
     cars = cache["cars"]
     passengers = cache["passengers"]
 
     if cache["ticks"] >= cache["maxTicks"]:
         return True
+
+    for passenger in cache["passengers"].values():
+        if passenger.is_in_car:
+            passenger.traveled += 1
+        else:
+            passenger.waited_for_car += 1
 
     for car in cars:
         if len(car.passengers_list) > 0:
@@ -36,7 +44,7 @@ def update(cache):
 
         for passenger in cache["passengers"].values():
             if passenger.car_id is not None:
-                pass # cruisin in da hood
+                pass  # cruisin in da hood
             else:
                 non_occupied_cars = list(filter(lambda car: len(car.passengers_list) == 0, cars))
                 if len(non_occupied_cars) <= 0:
@@ -45,8 +53,7 @@ def update(cache):
                 car.path = shortest_path
                 car.passengers_list.append(passenger.id)
                 passenger.car_id = car.id
-        
-    
+
     current_next_passenger_spawn = cache["next_passenger_spawn"]
     if current_next_passenger_spawn == 0:
         new_passenger = Passenger(cache["valid_positions"], cache["random"])
@@ -55,10 +62,5 @@ def update(cache):
     else:
         cache["next_passenger_spawn"] -= 1
 
-
-    
-
     cache["ticks"] = cache["ticks"] + 1
-    return False 
-
-   
+    return False
