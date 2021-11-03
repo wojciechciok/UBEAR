@@ -3,6 +3,7 @@ from pathfinder import get_shortest_path_for_passenger
 from passenger import Passenger
 import json
 from json import JSONEncoder
+from metrics import get_all_metrics
 
 # random 0-10 ticks
 PASSENGER_SPAWN_RANGE = 10
@@ -13,8 +14,9 @@ class EmployeeEncoder(JSONEncoder):
         return o.__dict__
 
 
+
 def get_passengers_and_cars_json(cache):
-    return json.dumps({'passengers': list(cache['passengers'].values()), 'cars': cache['cars']}, cls=EmployeeEncoder)
+    return json.dumps({'passengers': list(cache['passengers'].values()), 'cars': cache['cars'], "metrics": get_all_metrics(cache)}, cls=EmployeeEncoder)
 
 
 def update(cache):
