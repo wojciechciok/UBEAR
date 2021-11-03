@@ -1,4 +1,4 @@
-class Map {
+class City {
   constructor(size) {
     // map is just a grid of 1's an 0's
     this.size = size;
@@ -15,17 +15,17 @@ class Map {
     }
   }
   // method for drawing the map
-  show() {
+  show(p) {
     for (let i = 0; i < this.grid.length; i++) {
       for (let j = 0; j < this.grid.length; j++) {
-        noStroke();
-        if (this.grid[i][j]) fill(50);
-        else fill(150);
-        square(i * cellSize, j * cellSize, cellSize);
+        p.noStroke();
+        if (this.grid[i][j]) p.fill(50);
+        else p.fill(150);
+        p.square(i * cellSize, j * cellSize, cellSize);
       }
     }
   }
-  roadConstruction(x, y){
-    this.grid[x][y] = !this.grid[x][y]
+  roadConstruction(x, y) {
+    this.grid[x][y] = !this.grid[x][y];
   }
 }
