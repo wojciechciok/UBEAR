@@ -1,6 +1,15 @@
 // backend ulr
 let url = " http://localhost:105";
 
+// P5 components
+let inputMaxUpdates;
+//Passanger spawn minimum
+let paragraphPassSpawnMin;
+let inputPassSpawnMin;
+//Passanger spawn maximum
+let paragraphPassSpawnMax;
+let inputPassSpawnMax;
+
 // size of the map (width and height)
 const size = 700;
 // number of cells in a row
@@ -38,6 +47,9 @@ let button;
 // Road Construction, Taxi radio
 let radioBtn;
 
+// if checked, simulation will be performed without visualization (as fast as possible)
+let noVisualizationCheckBox;
+
 // Simuation Started flag
 let simulationStarted = false;
 
@@ -48,9 +60,41 @@ function preload() {
 }
 
 // setup - this function is called once at the beginning of the program
+
+let paragraphMaxUpdates;
+
 function setup() {
+  //Number updates slider
+
   createCanvas(size, size);
+  paragraphMaxUpdates = createP("Max Updates");
+  paragraphMaxUpdates.position(800, 0);
+  inputMaxUpdates = createInput("50"); //createSlider(min, max, [value], [step])
+  inputMaxUpdates.position(900, 16);
+  inputMaxUpdates.style("width", "80px");
+
+  //Minimum interval time for passanger spawning
+
+  paragraphPassSpawnMin = createP(
+    "Minimum value for passenger spawning interval"
+  );
+  paragraphPassSpawnMin.position(800, 30);
+  inputPassSpawnMin = createInput("1");
+  inputPassSpawnMin.position(1120, 44);
+  inputPassSpawnMin.style("width", "80px");
+
+  //Maximum interval time for passanger spawning
+
+  paragraphPassSpawnMax = createP(
+    "Maximum value for passenger spawning interval"
+  );
+  paragraphPassSpawnMax.position(800, 60);
+  inputPassSpawnMax = createInput("10");
+  inputPassSpawnMax.position(1120, 74);
+  inputPassSpawnMax.style("width", "80px");
+
   // initialize map
+
   map = new Map(cellNum);
 
   map.show();
@@ -62,10 +106,13 @@ function setup() {
 
   // Create Radio Buttons
   radioBtn = createRadio();
-  radioBtn.option('Road Construction');
-  radioBtn.option('Taxi Placement');
-  radioBtn.style("width", "150px")
-  radioBtn.position(0, button.position()["y"] + 24)
+  radioBtn.option("Road Construction");
+  radioBtn.option("Taxi Placement");
+  radioBtn.style("width", "150px");
+  radioBtn.position(0, button.position()["y"] + 24);
+
+  noVisualizationCheckBox = createCheckbox("No visualization", false);
+  noVisualizationCheckBox.position(0, radioBtn.position()["y"] + 40);
 }
 
 function update(data) {
@@ -122,13 +169,12 @@ function mouseClicked(event) {
   let x = Math.floor(mouseX / cellSize);
   let y = Math.floor(mouseY / cellSize);
   let v = radioBtn.value();
-  switch(v){
+  switch (v) {
     case "Road Construction":
       map.roadConstruction(x, y);
       map.show();
-      for(c in cars){
-
-        if(cars[c].x == x && cars[c].y == y){
+      for (c in cars) {
+        if (cars[c].x == x && cars[c].y == y) {
           delete cars[c];
         } else {
           cars[c].show();
@@ -139,7 +185,7 @@ function mouseClicked(event) {
     case "Taxi Placement":
       let taxiID = carsIDs.length;
 
-      if(map.grid[x][y] != true) break;
+      if (map.grid[x][y] != true) break;
       cars[taxiID] = placeTaxi(taxiID, x, y);
       carsIDs.push(taxiID);
       tmpCars.push(cars[taxiID]);
@@ -148,7 +194,7 @@ function mouseClicked(event) {
   }
 }
 
-function placeTaxi(id, x, y){
+function placeTaxi(id, x, y) {
   return new Car(id, x, y);
 }
 
@@ -164,10 +210,9 @@ function startSimulation() {
 
   carsIDs = [];
   tmpCars = [];
-  for (c in cars){
+  for (c in cars) {
     carsIDs.push(cars[c].id);
-    tmpCars.push(cars[c])
-          
+    tmpCars.push(cars[c]);
   }
   // backend needs 1 when frontend has zeros an vice versa
   const invertedMap = [];
@@ -195,14 +240,26 @@ function startSimulation() {
       cars: tmpCars.map((c) => {
         return { x: c.x, y: c.y, id: c.id };
       }),
+      maxUpdates: int(inputMaxUpdates.value()),
+      no_visualization: noVisualizationCheckBox.checked(),
+      minPassSpawn: int(inputPassSpawnMin.value()),
+      maxPassSpawn: int(inputPassSpawnMax.value()),
     },
     function (result) {
-      // if successful allow animation
-      const evtSource = new EventSource(`${url}/cars/positions`);
-      evtSource.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        update(data);
-      };
+      if (!noVisualizationCheckBox.checked()) {
+        let guid = result.guid;
+        // if successful allow animation
+        const evtSource = new EventSource(`${url}/cars/positions/${guid}`);
+        evtSource.onmessage = (event) => {
+          const data = JSON.parse(event.data);
+          if (data.finished) {
+            alert("Simulation finished");
+            evtSource.close();
+          } else {
+            update(data);
+          }
+        };
+      }
     },
     function (error) {
       console.log(error);
