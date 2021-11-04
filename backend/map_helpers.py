@@ -41,7 +41,7 @@ def update(cache):
                     passenger.is_in_car = True
                 if car.x == passenger.x_dest and car.y == passenger.y_dest and passenger.is_in_car:
                     car.passengers_list.remove(passenger.id)
-                    cache["passengers"].pop(passenger.id, None)
+                    cache["served_passengers"].append(cache["passengers"].pop(passenger.id, None))
         car.move()
 
         for passenger in cache["passengers"].values():

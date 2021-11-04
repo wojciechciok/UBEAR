@@ -1,9 +1,16 @@
 function addData(chart, label, data) {
   chart.data.labels.push(label);
-  chart.data.datasets.forEach((dataset) => {
-    dataset.data.push(data);
-  });
+  for (let i = 0; i < data.length; i++) {
+    chart.data.datasets[i].data.push(data[i]);
+  }
   chart.update();
+}
+
+function resetChart(chart) {
+  chart.data.datasets.forEach((dataset) => {
+    dataset.data = [];
+  });
+  chart.data.labels = [];
 }
 
 const ctx = document.getElementById("chart").getContext("2d");
@@ -17,6 +24,13 @@ const myChart = new Chart(ctx, {
         data: [],
         fill: true,
         borderColor: "rgb(75, 192, 192)",
+        tension: 0.1,
+      },
+      {
+        label: "Total distance traveled by the passengers",
+        data: [],
+        fill: true,
+        borderColor: "rgb(182, 101, 122)",
         tension: 0.1,
       },
     ],
@@ -41,5 +55,6 @@ const myChart = new Chart(ctx, {
       },
     },
     animation: false,
+    radius: 0,
   },
 });

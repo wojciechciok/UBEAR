@@ -3,19 +3,19 @@ from statistics import mean, median
 
 def get_metrics_for_passengers(passengers):
     lst = list(map(lambda passenger: {
-               "waited_for_car": passenger.waited_for_car, "traveled": passenger.traveled}, passengers.values()))
+               "waited_for_car": passenger.waited_for_car, "traveled": passenger.traveled}, passengers))
     return {
         "list": lst,
-        "sum_waited_for_car": sum(map(lambda passenger: passenger.waited_for_car, passengers.values())),
-        "sum_travelled": sum(map(lambda passenger: passenger.traveled, passengers.values())),
-        "min_waited_for_car": min(map(lambda passenger: passenger.waited_for_car, passengers.values())),
-        "min_travelled": min(map(lambda passenger: passenger.traveled, passengers.values())),
-        "max_waited_for_car": max(map(lambda passenger: passenger.waited_for_car, passengers.values())),
-        "max_travelled": max(map(lambda passenger: passenger.traveled, passengers.values())),
-        "median_waited_for_car": median(map(lambda passenger: passenger.waited_for_car, passengers.values())),
-        "median_travelled": median(map(lambda passenger: passenger.traveled, passengers.values())),
-        "mean_waited_for_car": mean(map(lambda passenger: passenger.waited_for_car, passengers.values())),
-        "mean_travelled": mean(map(lambda passenger: passenger.traveled, passengers.values()))
+        "sum_waited_for_car": sum(map(lambda passenger: passenger.waited_for_car, passengers)),
+        "sum_travelled": sum(map(lambda passenger: passenger.traveled, passengers)),
+        "min_waited_for_car": min(map(lambda passenger: passenger.waited_for_car, passengers)),
+        "min_travelled": min(map(lambda passenger: passenger.traveled, passengers)),
+        "max_waited_for_car": max(map(lambda passenger: passenger.waited_for_car, passengers)),
+        "max_travelled": max(map(lambda passenger: passenger.traveled, passengers)),
+        "median_waited_for_car": median(map(lambda passenger: passenger.waited_for_car, passengers)),
+        "median_travelled": median(map(lambda passenger: passenger.traveled, passengers)),
+        "mean_waited_for_car": mean(map(lambda passenger: passenger.waited_for_car, passengers)),
+        "mean_travelled": mean(map(lambda passenger: passenger.traveled, passengers))
     }
 
 
@@ -39,6 +39,6 @@ def get_metrics_for_cars(cars):
 
 def get_all_metrics(cache):
     return {
-        "passengers": get_metrics_for_passengers(cache["passengers"]),
+        "passengers": get_metrics_for_passengers(list(cache["passengers"].values()) + cache["served_passengers"]),
         "cars": get_metrics_for_cars(cache["cars"])
     }

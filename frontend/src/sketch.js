@@ -98,7 +98,10 @@ let simulation1 = function (p) {
     const metrics = data.metrics;
 
     // update chart
-    addData(myChart, "", metrics.cars.sum_travelled);
+    addData(myChart, "", [
+      metrics.cars.sum_travelled,
+      metrics.passengers.sum_travelled,
+    ]);
 
     // update cars
     for (let c of carsData) {
@@ -184,6 +187,7 @@ let simulation1 = function (p) {
 
   function startSimulation() {
     simulationStarted = true;
+    resetChart(myChart);
     for (let x = 0; x < map.grid.length; x++) {
       for (let y = 0; y < map.grid[x].length; y++) {
         if (map.grid[x][y]) {
