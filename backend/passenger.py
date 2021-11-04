@@ -15,6 +15,7 @@ class Passenger:
         self.waited_for_car = 0  # time spent outside of a car
         self.traveled = 0  # time spent in a car
 
+        self.shortest_path_length = None
 
 def get_valid_passenger_position(valid_positions, random):
     return random.choice(valid_positions)

@@ -1,12 +1,16 @@
 import random
-from pathfinder import get_shortest_path_for_passenger
+from pathfinder import get_cars_in_patinece_rage, get_shortest_path_for_passenger, get_path, manhattan_distance
 from passenger import Passenger
 import json
 from json import JSONEncoder
+import copy
+from paths_collection import PathsCollection, ValidCarPaths
 
 # random 0-10 ticks
 PASSENGER_SPAWN_RANGE = 10
-
+CAR_CAPACITY = 4
+PASSENGER_WAITING_PATIENCE = 50
+PASSENGER_DETOUR_TOLERANCE = 1.5
 
 class EmployeeEncoder(JSONEncoder):
     def default(self, o):
@@ -15,6 +19,46 @@ class EmployeeEncoder(JSONEncoder):
 
 def get_passengers_and_cars_json(cache):
     return json.dumps({'passengers': list(cache['passengers'].values()), 'cars': cache['cars']}, cls=EmployeeEncoder)
+
+
+
+def combinations(p):
+    possible_paths = []
+    coordinates = []
+    for passenger in p:
+        if passenger.is_in_car:
+            coordinates.append([[passenger.x_dest, passenger.y_dest]])
+        else:
+            coordinates.append([[passenger.x, passenger.y], [passenger.x_dest, passenger.y_dest]])
+
+    def get_path_step(path, rest):
+        if len(rest) <= 0:
+            possible_paths.append(path)
+            return
+        for i in range(len(rest)):
+            next_path = copy.deepcopy(path)
+            next_rest = copy.deepcopy(rest)
+            next_path.append(next_rest[i][0])
+            if len(next_rest[i]) == 1:
+                del next_rest[i]
+            else:
+                next_rest[i].pop(0)
+            get_path_step(next_path, next_rest)
+
+    get_path_step([], coordinates)
+    return possible_paths
+
+def is_point_passenger_starting_location(passengers, point):
+    for passenger in passengers:
+        if passenger.x == point[0] and passenger.y == point[1]:
+            return True
+    return False
+
+def is_point_passenger_destination_location(passengers, point):
+    for passenger in passengers:
+        if passenger.x_dest == point[0] and passenger.y_dest == point[1]:
+            return True, passenger
+    return False, None
 
 
 def update(cache):
@@ -42,18 +86,78 @@ def update(cache):
                     cache["passengers"].pop(passenger.id, None)
         car.move()
 
-        for passenger in cache["passengers"].values():
-            if passenger.car_id is not None:
-                pass  # cruisin in da hood
-            else:
-                non_occupied_cars = list(filter(lambda car: len(car.passengers_list) == 0, cars))
-                if len(non_occupied_cars) <= 0:
-                    continue
-                (shortest_path, car) = get_shortest_path_for_passenger(non_occupied_cars, passenger, cache["grid"])
-                car.path = shortest_path
-                car.passengers_list.append(passenger.id)
-                passenger.car_id = car.id
+    for passenger in cache["passengers"].values():
+        if passenger.car_id is not None:
+            pass # cruisin in da hood
+        else:
+            (x, y, xDest, yDest) = passenger.x, passenger.y, passenger.x_dest, passenger.y_dest
+            passenger.shortest_path_length = len(get_path(x,y, xDest,yDest, cache["grid"]))
 
+            # Capacity filtering stage
+            available_cars = list(filter(lambda car: len(car.passengers_list) < CAR_CAPACITY, cars))
+            if len(available_cars) <= 0:
+                continue
+
+            # Neighbouring filtering stage
+            cars_in_range = get_cars_in_patinece_rage(available_cars, passenger, cache["grid"], PASSENGER_WAITING_PATIENCE)
+            if len(cars_in_range) <= 0:
+                continue
+
+            # Schedule Computing Stage
+            possible_paths = PathsCollection()
+            for car in cars_in_range:
+                valid_car_paths = ValidCarPaths(car)
+
+                passenger_ids = car.passengers_list
+                car_passengers = [passager for passager in cache["passengers"].values() if passager.id in passenger_ids]
+                car_passengers.append(passenger)
+                passengers_combinations = combinations(car_passengers)
+
+
+                # Time Limit filtering stage
+                for combination in passengers_combinations:
+                    is_possible_path = True
+                    distance = 0
+                    path = []
+                    (xTmp, yTmp) = car.x, car.y
+                    for point in combination:
+                        if point[0] == xTmp and point[1] == yTmp:
+                            continue
+                        section = get_path(xTmp, yTmp, point[0], point[1], cache["grid"], cache["dynamic_paths_collection"])
+                        distance += len(section)
+                        section.pop(0)
+                        path.extend(section)
+
+                        if is_point_passenger_starting_location(car_passengers, point):
+                            if distance > PASSENGER_WAITING_PATIENCE:
+                                is_possible_path = False
+                                break
+
+                        # Detour Distance Computing Stage
+                        destination, dest_passenger = is_point_passenger_destination_location(car_passengers, point)
+                        if destination:
+                            if (distance + dest_passenger.traveled) > (dest_passenger.shortest_path_length * PASSENGER_DETOUR_TOLERANCE):
+                                is_possible_path = False
+                                break
+
+                        (xTmp, yTmp) = point[0],  point[1]
+
+                    if is_possible_path:
+                        valid_car_paths.add_path(path)
+
+                if valid_car_paths.has_paths():
+                    possible_paths.add_car_paths(valid_car_paths)
+
+
+
+            if possible_paths.has_car_paths():
+                (car, best_path) = possible_paths.get_best_car_path()
+                if car is not None and path is not None:
+                    car.path = best_path
+                    car.passengers_list.append(passenger.id)
+                    passenger.car_id = car.id
+        
+    
     current_next_passenger_spawn = cache["next_passenger_spawn"]
     if current_next_passenger_spawn == 0:
         new_passenger = Passenger(cache["valid_positions"], cache["random"])

@@ -38,6 +38,7 @@ def init_single(content):
     cache["guid"] = str(uuid4())
     cache["min_pass_spawn"] = content["minPassSpawn"]
     cache["max_pass_spawn"] = content["maxPassSpawn"]
+    cache["dynamic_paths_collection"] = {}
 
     return cache
 

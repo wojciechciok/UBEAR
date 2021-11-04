@@ -18,7 +18,10 @@ class Node():
 
 # manhattan distance for now
 def heurestic(start, end):
-    return abs(start.position[0] - end.position[0]) + abs(start.position[1] - end.position[1])
+    return manhattan_distance(start.position[0], start.position[1], end.position[0], end.position[1])
+
+def manhattan_distance(xStart, yStart, xDest, yDest):
+    return abs(xStart - xDest) + abs(yStart - yDest)
 
 
 def astar(maze, start, end, diagonal = False):
@@ -109,11 +112,23 @@ def astar(maze, start, end, diagonal = False):
                 open_list.append(child)
 
 
-def get_path(x, y, xDest, yDest, grid):
+def get_path(x, y, xDest, yDest, grid, dynamic_paths_collection = None):
     start = (x, y)
     end = (xDest, yDest)
 
+    if dynamic_paths_collection is not None:
+        if (x, y, xDest, yDest) in dynamic_paths_collection:
+            path = dynamic_paths_collection[(x, y, xDest, yDest)]
+            return path
+
+        if (xDest, yDest, x, y) in dynamic_paths_collection:
+            path = list(reversed(dynamic_paths_collection[(xDest, yDest, x, y)]))
+            return path
+
     path = astar(grid, start, end)
+    if dynamic_paths_collection is not None and len(path) > 0:
+        dynamic_paths_collection[(x, y, xDest, yDest)] = path
+
     return path
 
 def get_shortest_path(cars, xDest, yDest, grid):
@@ -130,11 +145,26 @@ def get_shortest_path(cars, xDest, yDest, grid):
 
 
 def get_shortest_path_for_passenger(cars, passenger, grid):
-    (x, y, destX, destY) = passenger.x, passenger.y, passenger.x_dest, passenger.y_dest
+    (x, y, xDest, yDest) = passenger.x, passenger.y, passenger.x_dest, passenger.y_dest
     shortest_path, chosen_car = get_shortest_path(cars, x, y, grid)
-    path_for_passenger = get_path(x, y, destX, destY, grid)
+    path_for_passenger = get_path(x, y, xDest, yDest, grid)
     shortest_path = shortest_path + path_for_passenger[1:]
     return shortest_path, chosen_car
+
+def get_cars_in_patinece_rage(cars, passenger, grid, patience):
+    cars_in_range = []
+    (x, y) = passenger.x, passenger.y
+
+    for car in sorted(cars, key=lambda car: car.id):
+        approx_dist = manhattan_distance(car.x, car.y, x, y)
+        if approx_dist > patience:
+            continue
+        path = get_path(car.x, car.y, x, y, grid)
+        path_len = get_path_length(path)
+        if path_len < patience:
+            cars_in_range.append(car)
+
+        return cars_in_range
 
 # for now only left right, up, down (no left-down)
 def get_path_length(path):
