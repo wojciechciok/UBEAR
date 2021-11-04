@@ -151,7 +151,7 @@ def get_shortest_path_for_passenger(cars, passenger, grid):
     shortest_path = shortest_path + path_for_passenger[1:]
     return shortest_path, chosen_car
 
-def get_cars_in_patinece_rage(cars, passenger, grid, patience):
+def get_cars_in_patinece_range(cars, passenger, grid, patience, dynamic_paths_collection):
     cars_in_range = []
     (x, y) = passenger.x, passenger.y
 
@@ -159,7 +159,7 @@ def get_cars_in_patinece_rage(cars, passenger, grid, patience):
         approx_dist = manhattan_distance(car.x, car.y, x, y)
         if approx_dist > patience:
             continue
-        path = get_path(car.x, car.y, x, y, grid)
+        path = get_path(car.x, car.y, x, y, grid, dynamic_paths_collection)
         path_len = get_path_length(path)
         if path_len < patience:
             cars_in_range.append(car)
