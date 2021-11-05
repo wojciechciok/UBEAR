@@ -10,7 +10,7 @@ import threading
 from simulation_threads import thread_creator, init_single
 
 # in seconds
-FRAME_RATE = 1 / 5
+FRAME_RATE = 1 / 20
 
 # config = {
 #     "DEBUG": True,          # some Flask specific configs
