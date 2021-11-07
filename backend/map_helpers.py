@@ -51,17 +51,21 @@ def combinations(p):
     return possible_paths
 
 
-def is_point_passenger_starting_location(passengers, point):
-    for passenger in passengers:
-        if passenger.x == point[0] and passenger.y == point[1]:
+def is_point_passenger_starting_location(passengers, passenger, point):
+    if passenger.x == point[0] and passenger.y == point[1]:
+        return True
+    for p in passengers:
+        if p.x == point[0] and p.y == point[1]:
             return True
     return False
 
 
-def is_point_passenger_destination_location(passengers, point):
-    for passenger in passengers:
-        if passenger.x_dest == point[0] and passenger.y_dest == point[1]:
-            return True, passenger
+def is_point_passenger_destination_location(passengers, passenger, point):
+    if passenger.x_dest == point[0] and passenger.y_dest == point[1]:
+        return True, passenger
+    for p in passengers:
+        if p.x_dest == point[0] and p.y_dest == point[1]:
+            return True, p
     return False, None
 
 
@@ -183,13 +187,13 @@ def process_combination(car, combination, cache, car_passengers, passenger, vali
         distance += len(section)
         path.extend(section)
 
-        if is_point_passenger_starting_location(car_passengers, point):
+        if is_point_passenger_starting_location(car_passengers, passenger, point):
             if distance > PASSENGER_WAITING_PATIENCE:
                 is_possible_path = False
                 break
 
         # Detour Distance Computing Stage
-        destination, dest_passenger = is_point_passenger_destination_location(car_passengers, point)
+        destination, dest_passenger = is_point_passenger_destination_location(car_passengers, passenger, point)
         if destination:
             if (distance + dest_passenger.traveled) > (
                     dest_passenger.shortest_path_length * PASSENGER_DETOUR_TOLERANCE) and dest_passenger.is_in_car:
