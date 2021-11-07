@@ -1,5 +1,6 @@
 import json
 
+
 # https://medium.com/@nicholas.w.swift/easy-a-star-pathfinding-7e6689c7f7b2
 class Node():
     """A node class for A* Pathfinding"""
@@ -20,11 +21,12 @@ class Node():
 def heurestic(start, end):
     return manhattan_distance(start.position[0], start.position[1], end.position[0], end.position[1])
 
+
 def manhattan_distance(xStart, yStart, xDest, yDest):
     return abs(xStart - xDest) + abs(yStart - yDest)
 
 
-def astar(maze, start, end, diagonal = False):
+def astar(maze, start, end, diagonal=False):
     """Returns a list of tuples as a path from the given start to the given end in the given maze"""
 
     # Create start and end node
@@ -62,7 +64,7 @@ def astar(maze, start, end, diagonal = False):
             while current is not None:
                 path.append(current.position)
                 current = current.parent
-            return path[::-1] # Return reversed path
+            return path[::-1]  # Return reversed path
 
         # Generate children
         children = []
@@ -70,13 +72,14 @@ def astar(maze, start, end, diagonal = False):
         if diagonal:
             new_positions += [(-1, -1), (-1, 1), (1, -1), (1, 1)]
 
-        for new_position in new_positions: # Adjacent squares
+        for new_position in new_positions:  # Adjacent squares
 
             # Get node position
             node_position = (current_node.position[0] + new_position[0], current_node.position[1] + new_position[1])
 
             # Make sure within range
-            if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (len(maze[len(maze)-1]) -1) or node_position[1] < 0:
+            if node_position[0] > (len(maze) - 1) or node_position[0] < 0 or node_position[1] > (
+                    len(maze[len(maze) - 1]) - 1) or node_position[1] < 0:
                 continue
 
             # Make sure walkable terrain
@@ -112,7 +115,7 @@ def astar(maze, start, end, diagonal = False):
                 open_list.append(child)
 
 
-def get_path(x, y, xDest, yDest, grid, dynamic_paths_collection = None):
+def get_path(x, y, xDest, yDest, grid, dynamic_paths_collection=None):
     start = (x, y)
     end = (xDest, yDest)
 
@@ -130,6 +133,7 @@ def get_path(x, y, xDest, yDest, grid, dynamic_paths_collection = None):
         dynamic_paths_collection[(x, y, xDest, yDest)] = path
 
     return path
+
 
 def get_shortest_path(cars, xDest, yDest, grid):
     min_len = -1
@@ -151,20 +155,22 @@ def get_shortest_path_for_passenger(cars, passenger, grid):
     shortest_path = shortest_path + path_for_passenger[1:]
     return shortest_path, chosen_car
 
+
 def get_cars_in_patinece_range(cars, passenger, grid, patience, dynamic_paths_collection):
     cars_in_range = []
     (x, y) = passenger.x, passenger.y
 
-    for car in sorted(cars, key=lambda car: car.id):
+    for car in cars:
         approx_dist = manhattan_distance(car.x, car.y, x, y)
         if approx_dist > patience:
             continue
         path = get_path(car.x, car.y, x, y, grid, dynamic_paths_collection)
         path_len = get_path_length(path)
-        if path_len < patience:
+        if path_len <= patience:
             cars_in_range.append(car)
 
-        return cars_in_range
+    return cars_in_range
+
 
 # for now only left right, up, down (no left-down)
 def get_path_length(path):
