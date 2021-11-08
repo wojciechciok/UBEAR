@@ -1,6 +1,6 @@
 // backend ulr
 let url = " http://localhost:105";
-let eventSources = [];
+let eventSource;
 
 // P5 components
 let inputMaxUpdates;
@@ -18,7 +18,7 @@ const cellNum = 21;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
-let carsNumber= 0;
+let carsNumber = 0;
 // refresh rate
 const refreshRate = 15;
 
@@ -121,11 +121,17 @@ function setup() {
 
   // Create Taxi Spawner Generator
   taxiSpawnerTxt = createP("Spawn taxis randomly");
-  taxiSpawnerTxt.position(radioBtn.position()["x"] + 256, radioBtn.position()["y"]);
+  taxiSpawnerTxt.position(
+    radioBtn.position()["x"] + 256,
+    radioBtn.position()["y"]
+  );
 
   taxiSpawnerInp = createInput("0");
 
-  taxiSpawnerInp.position(taxiSpawnerTxt.position()["x"] + 150, taxiSpawnerTxt.position()["y"]);
+  taxiSpawnerInp.position(
+    taxiSpawnerTxt.position()["x"] + 150,
+    taxiSpawnerTxt.position()["y"]
+  );
 }
 
 function update(data) {
@@ -212,7 +218,7 @@ function placeTaxi(id, x, y) {
 }
 
 // spawns taxis based on the spawn taxi input field
-function spawnAmountOfTaxis(amount){
+function spawnAmountOfTaxis(amount) {
   for (let i = 0; i < amount; i++) {
     cars[carsIDs.length] = new Car(carsIDs.length);
     carsIDs.push(carsIDs.length);
@@ -248,11 +254,8 @@ function startSimulation() {
     }
   }
 
-
   // before making new init requests close all existing connections
-  for (eventSource of eventSources){
-    eventSource.close();
-  }
+  if (eventSource) eventSource.close();
 
   // send the map to the backend
   httpPost(
@@ -272,17 +275,16 @@ function startSimulation() {
       if (!noVisualizationCheckBox.checked()) {
         let guid = result.guid;
         // if successful allow animation
-        const evtSource = new EventSource(`${url}/cars/positions/${guid}`);
-        evtSource.onmessage = (event) => {
+        eventSource = new EventSource(`${url}/cars/positions/${guid}`);
+        eventSource.onmessage = (event) => {
           const data = JSON.parse(event.data);
           if (data.finished) {
             alert("Simulation finished");
-            evtSource.close();
+            eventSource.close();
           } else {
             update(data);
           }
         };
-        eventSources.push(evtSource);
       }
     },
     function (error) {
