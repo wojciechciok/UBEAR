@@ -1,5 +1,6 @@
 // backend ulr
 let url = " http://localhost:105";
+let eventSources = [];
 
 // P5 components
 let inputMaxUpdates;
@@ -230,6 +231,7 @@ function startSimulation() {
 
   // Spawns taxis
   carsNumber = int(taxiSpawnerInp.value());
+
   spawnAmountOfTaxis(carsNumber);
   carsIDs = [];
   tmpCars = [];
@@ -244,6 +246,12 @@ function startSimulation() {
     for (let col of row) {
       invertedMap[invertedMap.length - 1].push(abs(col - 1));
     }
+  }
+
+
+  // before making new init requests close all existing connections
+  for (eventSource of eventSources){
+    eventSource.close();
   }
 
   // send the map to the backend
@@ -274,6 +282,7 @@ function startSimulation() {
             update(data);
           }
         };
+        eventSources.push(evtSource);
       }
     },
     function (error) {
