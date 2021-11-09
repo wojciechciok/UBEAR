@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UBEAR</title>
     <style>
+      .radio > input {
+        position: absolute;
+        margin-top: 0.3rem;
+        margin-left: -1.25rem;
+      }
       .block {
         width: 500px;
         width: 500px;
@@ -27,9 +32,6 @@
         padding-top: 0;
         margin-top: 0;
       }
-      p {
-        margin: 0;
-      }
     </style>
     <link
       rel="stylesheet"
@@ -46,18 +48,30 @@
   </head>
 
   <body class="ubear-bg-100">
+    <h3
+      class="fixed-top"
+      style="
+        background-color: rgba(255, 255, 255, 0.3);
+        width: min-content;
+        left: auto;
+        border-radius: 0 0 0 10px;
+        padding: 10px;
+      "
+      id="updatesCounter"
+    >
+      0
+    </h3>
     <main>
       <div class="row m-3">
         <div
           class="col ubear-bg-80"
-          style="max-width: 300px; border-radius: 30px"
+          style="
+            max-width: 300px;
+            border-radius: 30px;
+            padding: 25px;
+            height: fit-content;
+          "
         >
-          <h3
-            style="position: absolute; right: 0; margin-right: 20px"
-            id="updatesCounter"
-          >
-            0
-          </h3>
           <img
             src="./assets/ubear.png"
             class="img-fluid mx-auto d-block"
@@ -107,29 +121,8 @@
               value="0"
             />
           </div>
-          <div class="form-check" id="mode">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="mode"
-              id="exampleRadios1"
-              value="Road construction"
-            />
-            <label class="form-check-label" for="exampleRadios1">
-              Road construction
-            </label>
-            <br />
-            <input
-              class="form-check-input"
-              type="radio"
-              name="mode"
-              id="exampleRadios2"
-              value="Taxi placement"
-            />
-            <label class="form-check-label" for="exampleRadios2">
-              Taxi placement
-            </label>
-          </div>
+
+          <div id="mapModeRadioButton"></div>
 
           <div class="form-group form-check">
             <input
@@ -141,8 +134,9 @@
               >No visualisation</label
             >
           </div>
-          <div id="mapModeRadioButton"></div>
-          <button id="startButton">Start Simulation</button>
+          <button type="button" class="btn btn-light" id="startButton">
+            Start Simulation
+          </button>
         </div>
         <div class="col text-center">
           <h1>Regular Taxi Company</h1>
@@ -152,11 +146,16 @@
           <hr />
           <h3>Metrics</h3>
           <div class="block mx-auto">
-            <canvas id="chart" width="500" height="500"></canvas>
+            <canvas id="taxiChart" width="500" height="500"></canvas>
           </div>
         </div>
-        <div class="col bg-primary"></div>
-        <!-- <div id="c2"></div> -->
+        <div class="col text-center">
+          <h1>UBEAR Carpooling</h1>
+          <hr />
+          <h3>Visualisation</h3>
+          <hr />
+          <h3>Metrics</h3>
+        </div>
       </div>
     </main>
   </body>

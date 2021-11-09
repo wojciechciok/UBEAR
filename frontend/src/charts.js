@@ -12,9 +12,9 @@ function resetChart(chart) {
   });
   chart.data.labels = [];
 }
-
-const ctx = document.getElementById("chart").getContext("2d");
-const myChart = new Chart(ctx, {
+Chart.defaults.color = "#fff";
+const ctx = document.getElementById("taxiChart").getContext("2d");
+const taxiChart = new Chart(ctx, {
   type: "line",
   data: {
     labels: [],
