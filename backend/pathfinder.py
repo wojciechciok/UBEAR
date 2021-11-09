@@ -135,11 +135,11 @@ def get_path(x, y, xDest, yDest, grid, dynamic_paths_collection=None):
     return path
 
 
-def get_shortest_path(cars, xDest, yDest, grid):
+def get_shortest_path(cars, xDest, yDest, grid, dynamic_paths_collection):
     min_len = -1
     # cars are sorted here, so that there is no ambiguity to what car has been chosen (for simulation purposes)
     for car in sorted(cars, key=lambda car: car.id):
-        path = get_path(car.x, car.y, xDest, yDest, grid)
+        path = get_path(car.x, car.y, xDest, yDest, grid, dynamic_paths_collection)
         path_len = get_path_length(path)
         if path_len < min_len or min_len == -1:
             min_len = path_len
@@ -148,15 +148,15 @@ def get_shortest_path(cars, xDest, yDest, grid):
     return shortest_path, chosen_car
 
 
-def get_shortest_path_for_passenger(cars, passenger, grid):
+def get_shortest_path_for_passenger(cars, passenger, grid, dynamic_paths_collection):
     (x, y, xDest, yDest) = passenger.x, passenger.y, passenger.x_dest, passenger.y_dest
-    shortest_path, chosen_car = get_shortest_path(cars, x, y, grid)
+    shortest_path, chosen_car = get_shortest_path(cars, x, y, grid, dynamic_paths_collection)
     path_for_passenger = get_path(x, y, xDest, yDest, grid)
     shortest_path = shortest_path + path_for_passenger[1:]
     return shortest_path, chosen_car
 
 
-def get_cars_in_patinece_range(cars, passenger, grid, patience, dynamic_paths_collection):
+def get_cars_in_patience_range(cars, passenger, grid, patience, dynamic_paths_collection):
     cars_in_range = []
     (x, y) = passenger.x, passenger.y
 

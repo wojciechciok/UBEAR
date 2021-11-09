@@ -1,7 +1,7 @@
 import random
 import threading
 
-from pathfinder import get_cars_in_patinece_range, get_shortest_path_for_passenger, get_path, manhattan_distance
+from pathfinder import get_cars_in_patience_range, get_shortest_path_for_passenger, get_path, manhattan_distance
 from passenger import Passenger
 import json
 from json import JSONEncoder
@@ -69,19 +69,7 @@ def is_point_passenger_destination_location(passengers, passenger, point):
     return False, None
 
 
-def update(cache):
-    cars = cache["cars"]
-    passengers = cache["passengers"]
-
-    if cache["ticks"] >= cache["maxTicks"]:
-        return True
-
-    for passenger in cache["passengers"].values():
-        if passenger.is_in_car:
-            passenger.traveled += 1
-        else:
-            passenger.waited_for_car += 1
-
+def move_cars(cars, passengers):
     for car in cars:
         if len(car.passengers_list) > 0:
             for passenger_id in car.passengers_list:
@@ -91,8 +79,29 @@ def update(cache):
                     passenger.is_in_car = True
                 if car.x == passenger.x_dest and car.y == passenger.y_dest and passenger.is_in_car:
                     car.passengers_list.remove(passenger.id)
-                    cache["passengers"].pop(passenger.id, None)
+                    passengers.pop(passenger.id, None)
         car.move()
+
+
+def regular_update(cache):
+    cars = cache["taxi_cars"]
+
+    for passenger in cache["taxi_passengers"].values():
+        if passenger.car_id is not None:
+            pass  # cruisin in da hood
+        else:
+            non_occupied_cars = list(filter(lambda car: len(car.passengers_list) == 0, cars))
+            if len(non_occupied_cars) <= 0:
+                continue
+            (shortest_path, car) = get_shortest_path_for_passenger(non_occupied_cars, passenger, cache["grid"], cache["dynamic_paths_collection"])
+            car.path = shortest_path
+            car.passengers_list.append(passenger.id)
+            passenger.car_id = car.id
+
+
+def car_pooling_update(cache):
+    cars = cache["cars"]
+
     available_cars = [car for car in cars if len(car.passengers_list) < CAR_CAPACITY]
     if len(available_cars) > 0:
         for passenger in cache["passengers"].values():
@@ -106,7 +115,7 @@ def update(cache):
                     break
 
                 # Neighbouring filtering stage
-                cars_in_range = get_cars_in_patinece_range(available_cars, passenger, cache["grid"],
+                cars_in_range = get_cars_in_patience_range(available_cars, passenger, cache["grid"],
                                                            PASSENGER_WAITING_PATIENCE,
                                                            cache["dynamic_paths_collection"])
                 if len(cars_in_range) <= 0:
@@ -136,10 +145,33 @@ def update(cache):
                         car.passengers_list.append(passenger.id)
                         passenger.car_id = car.id
 
+
+def update(cache):
+    cars = cache["cars"]
+    taxi_cars = cache["taxi_cars"]
+    passengers = cache["passengers"]
+    taxi_passengers = cache["taxi_passengers"]
+
+    if cache["ticks"] >= cache["maxTicks"]:
+        return True
+
+    for passenger in cache["passengers"].values():
+        if passenger.is_in_car:
+            passenger.traveled += 1
+        else:
+            passenger.waited_for_car += 1
+
+    move_cars(cars, passengers)
+    move_cars(taxi_cars, taxi_passengers)
+    
+    car_pooling_update(cache)
+    regular_update(cache)
+
     current_next_passenger_spawn = cache["next_passenger_spawn"]
     if current_next_passenger_spawn == 0:
         new_passenger = Passenger(cache["valid_positions"], cache["random"])
         cache["passengers"][new_passenger.id] = new_passenger
+        cache["taxis_passengers"][new_passenger.id] = new_passenger
         cache["next_passenger_spawn"] = cache["random"].randrange(cache["min_pass_spawn"], cache["max_pass_spawn"])
     else:
         cache["next_passenger_spawn"] -= 1
