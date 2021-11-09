@@ -1,5 +1,6 @@
 // backend ulr
 let url = " http://localhost:105";
+let eventSource;
 
 // P5 components
 let inputMaxUpdates;
@@ -17,7 +18,7 @@ const cellNum = 51;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
-const carsNumber = 15;
+let carsNumber = 0;
 // refresh rate
 const refreshRate = 15;
 
@@ -46,6 +47,10 @@ let button;
 
 // Road Construction, Taxi radio
 let radioBtn;
+
+// taxi spawner generator
+let taxiSpawnerTxt;
+let taxiSpawnerInp;
 
 // if checked, simulation will be performed without visualization (as fast as possible)
 let noVisualizationCheckBox;
@@ -113,6 +118,20 @@ function setup() {
 
   noVisualizationCheckBox = createCheckbox("No visualization", false);
   noVisualizationCheckBox.position(0, radioBtn.position()["y"] + 40);
+
+  // Create Taxi Spawner Generator
+  taxiSpawnerTxt = createP("Spawn taxis randomly");
+  taxiSpawnerTxt.position(
+    radioBtn.position()["x"] + 256,
+    radioBtn.position()["y"]
+  );
+
+  taxiSpawnerInp = createInput("0");
+
+  taxiSpawnerInp.position(
+    taxiSpawnerTxt.position()["x"] + 150,
+    taxiSpawnerTxt.position()["y"]
+  );
 }
 
 function update(data) {
@@ -198,6 +217,14 @@ function placeTaxi(id, x, y) {
   return new Car(id, x, y);
 }
 
+// spawns taxis based on the spawn taxi input field
+function spawnAmountOfTaxis(amount) {
+  for (let i = 0; i < amount; i++) {
+    cars[carsIDs.length] = new Car(carsIDs.length);
+    carsIDs.push(carsIDs.length);
+  }
+}
+
 function startSimulation() {
   simulationStarted = true;
   for (let x = 0; x < map.grid.length; x++) {
@@ -208,6 +235,10 @@ function startSimulation() {
     }
   }
 
+  // Spawns taxis
+  carsNumber = int(taxiSpawnerInp.value());
+
+  spawnAmountOfTaxis(carsNumber);
   carsIDs = [];
   tmpCars = [];
   for (c in cars) {
@@ -223,13 +254,8 @@ function startSimulation() {
     }
   }
 
-  // create cars
-  // const tmpCars = [];
-  // for (let i = 0; i < carsNumber; i++) {
-  //   cars[i] = new Car(i);
-  //   carsIDs.push(i);
-  //   tmpCars.push(cars[i]);
-  // }
+  // before making new init requests close all existing connections
+  if (eventSource) eventSource.close();
 
   // send the map to the backend
   httpPost(
@@ -249,12 +275,12 @@ function startSimulation() {
       if (!noVisualizationCheckBox.checked()) {
         let guid = result.guid;
         // if successful allow animation
-        const evtSource = new EventSource(`${url}/cars/positions/${guid}`);
-        evtSource.onmessage = (event) => {
+        eventSource = new EventSource(`${url}/cars/positions/${guid}`);
+        eventSource.onmessage = (event) => {
           const data = JSON.parse(event.data);
           if (data.finished) {
             alert("Simulation finished");
-            evtSource.close();
+            eventSource.close();
           } else {
             update(data);
           }
