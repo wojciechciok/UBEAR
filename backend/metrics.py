@@ -43,4 +43,6 @@ def get_all_metrics(cache):
         "taxi_passengers": get_metrics_for_passengers(list(cache["taxi_passengers"].values()) + cache["served_taxi_passengers"]),
         "cars": get_metrics_for_cars(cache["cars"]),
         "taxi_cars": get_metrics_for_cars(cache["taxi_cars"]),
+        "served_passengers_count": len(cache["served_passengers"]),
+        "served_taxi_passengers_count": len(cache["served_taxi_passengers"])
     }
