@@ -1,13 +1,9 @@
 // backend ulr
 const url = " http://localhost:105";
-let eventSource;
 
-// P5 components
-let inputMaxUpdates;
-//Passanger spawn minimum
-let inputPassSpawnMin;
-//Passanger spawn maximum
-let inputPassSpawnMax;
+///////////////
+// VARIABLES //
+///////////////
 
 // size of the map (width and height)
 const size = 500;
@@ -20,6 +16,12 @@ let carsNumber = 0;
 // refresh rate
 const refreshRate = 15;
 
+////////////////////
+// GLOBAL OBJECTS //
+////////////////////
+
+// event source https://developer.mozilla.org/en-US/docs/Web/API/EventSource
+let eventSource;
 // size of a cell in pixels
 const cellSize = size / cellNum;
 // global object of the map see Map.js
@@ -32,31 +34,39 @@ let passengers = {};
 let passengersIDs = [];
 // helper array of cells which are road
 let road = [];
-
 // Taxis
 let tmpCars = [];
-
 // vars for images
 let carImg;
 let passengerImg;
-
-// Start Button
-let button;
-
-// Road Construction, Taxi radio
-let radioBtn;
-
-// taxi spawner generator
-let taxiSpawnerTxt;
-let taxiSpawnerInp;
-
-// if checked, simulation will be performed without visualization (as fast as possible)
-let noVisualizationCheckBox;
-
 // Simuation Started flag
 let simulationStarted = false;
 
-let paragraphMaxUpdates;
+////////////
+// INPUTS //
+////////////
+
+// taxi spawner generator
+let taxiSpawnerInp;
+// maximum number of updates
+let inputMaxUpdates;
+// Passanger spawn minimum
+let inputPassSpawnMin;
+// Passanger spawn maximum
+let inputPassSpawnMax;
+// if checked, simulation will be performed without visualization (as fast as possible)
+let noVisualizationCheckBox;
+// Start Button
+let startButton;
+// Road Construction, Taxi radio
+let radioBtn;
+// updates counter
+let updatesCounterElement;
+let updatesCounter = 0;
+
+//////////////////////////
+// REGULAR MODEL CANVAS //
+//////////////////////////
 
 let simulation1 = function (p) {
   // loading images
@@ -67,20 +77,20 @@ let simulation1 = function (p) {
 
   // setup - this function is called once at the beginning of the program
   p.setup = () => {
-    //Number updates slider
-
     p.createCanvas(size, size);
+
     inputMaxUpdates = p.select("#maxUpdatesInput");
 
-    //Minimum interval time for passanger spawning
+    // Minimum interval time for passanger spawning
     inputPassSpawnMin = p.select("#minPassengerSpawnIntervalInput");
 
-    //Maximum interval time for passanger spawning
+    // Maximum interval time for passanger spawning
     inputPassSpawnMax = p.select("#maxPassengerSpawnIntervalInput");
 
     // initialize map
     map = new City(cellNum);
 
+    // initial map draw
     map.show(p);
 
     // Create Button
@@ -99,21 +109,15 @@ let simulation1 = function (p) {
     noVisualizationCheckBox.parent(checkboxWrapper);
 
     // Create Taxi Spawner Generator
-    taxiSpawnerTxt = createP("Spawn taxis randomly");
-    taxiSpawnerTxt.position(
-      radioBtn.position()["x"] + 256,
-      radioBtn.position()["y"]
-    );
+    taxiSpawnerInp = p.select("#randomTaxiSpawnInput");
 
-    taxiSpawnerInp = createInput("0");
-
-    taxiSpawnerInp.position(
-      taxiSpawnerTxt.position()["x"] + 150,
-      taxiSpawnerTxt.position()["y"]
-    );
+    // select updates counter
+    updatesCounterElement = p.select("#updatesCounter");
   };
 
   function update(data) {
+    updatesCounter++;
+    updatesCounterElement.html(`Updates Count: ${updatesCounter}`);
     // extract data
     const carsData = data.cars;
     const passengersData = data.passengers;
@@ -210,12 +214,13 @@ let simulation1 = function (p) {
   // spawns taxis based on the spawn taxi input field
   function spawnAmountOfTaxis(amount) {
     for (let i = 0; i < amount; i++) {
-      cars[carsIDs.length] = new Car(carsIDs.length);
+      cars[carsIDs.length] = new Car(p, carsIDs.length);
       carsIDs.push(carsIDs.length);
     }
   }
 
   function startSimulation() {
+    updatesCounter = 0;
     simulationStarted = true;
     resetChart(myChart);
     for (let x = 0; x < map.grid.length; x++) {

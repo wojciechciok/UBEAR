@@ -1,7 +1,7 @@
 class Car {
   constructor(p, id, x, y) {
     if (x == undefined) {
-      const pos = getRandomPosition();
+      const pos = p.random(road);
       this.x = pos[0];
       this.y = pos[1];
     } else {

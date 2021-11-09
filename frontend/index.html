@@ -31,6 +31,12 @@
         "
       >
         <div style="grid-column: 1/3">
+          <h3
+            style="position: absolute; right: 0; margin-right: 20px"
+            id="updatesCounter"
+          >
+            0
+          </h3>
           <p style="display: inline-block">Max Updates</p>
           <input id="maxUpdatesInput" value="50" type="number" />
           <br />
@@ -43,6 +49,9 @@
             Maximum value for passenger spawning interval
           </p>
           <input id="maxPassengerSpawnIntervalInput" value="10" type="number" />
+          <br />
+          <p style="display: inline-block">Spawn taxis randomly</p>
+          <input id="randomTaxiSpawnInput" value="0" type="number" />
           <div id="mapModeRadioButton"></div>
           <div id="visualisationCheckbox"></div>
           <button id="startButton">Start Simulation</button>
