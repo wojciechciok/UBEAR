@@ -37,7 +37,7 @@ let road = [];
 // Taxis
 let tmpCars = [];
 // vars for images
-let carImg;
+let carImgs = {};
 let passengerImg;
 // Simuation Started flag
 let simulationStarted = false;
@@ -71,7 +71,9 @@ let updatesCounter = 0;
 let simulation1 = function (p) {
   // loading images
   p.preload = () => {
-    carImg = p.loadImage("../assets/taxi.png");
+    for (let i = 0; i < 4; i++) {
+      carImgs[i] = p.loadImage(`../assets/taxi_${i}.png`);
+    }
     passengerImg = p.loadImage("../assets/passenger.png");
   };
 

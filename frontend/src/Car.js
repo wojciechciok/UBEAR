@@ -33,7 +33,7 @@ class Car {
     p.rotate(rot);
     p.fill(255, 255, 0);
     p.imageMode(p.CENTER);
-    p.image(carImg, 0, 0, cellSize, cellSize);
+    p.image(carImgs[this.passengersList.length], 0, 0, cellSize, cellSize);
     p.pop();
     // draw the whole path
     for (let pos of this.path) {
