@@ -9,7 +9,7 @@ class Car {
       this.x = x;
       this.y = y;
     }
-    this.color = p.color(p.random(255), p.random(255), p.random(255), 60);
+    this.color = p.color(p.random(255), p.random(255), p.random(255), 50);
     this.id = id;
     this.path = [];
     this.occupied = false;

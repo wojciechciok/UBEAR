@@ -16,7 +16,6 @@ PASSENGER_WAITING_PATIENCE = 50
 PASSENGER_DETOUR_TOLERANCE = 1.5
 
 
-
 class EmployeeEncoder(JSONEncoder):
     def default(self, o):
         return o.__dict__
@@ -27,10 +26,9 @@ def get_passengers_and_cars_json(cache):
         'passengers': list(cache['passengers'].values()),
         'cars': cache['cars'],
         'taxi_cars': cache['taxi_cars'],
-        'taxi_passengers': cache['taxi_passengers'],
+        'taxi_passengers': list(cache['taxi_passengers'].values()),
         "metrics": get_all_metrics(cache)}
-    , cls=EmployeeEncoder)
-
+        , cls=EmployeeEncoder)
 
 
 def combinations(p):
@@ -99,10 +97,11 @@ def regular_update(cache):
         if passenger.car_id is not None:
             pass  # cruisin in da hood
         else:
-            non_occupied_cars = list(filter(lambda car: len(car.passengers_list) == 0, cars))
+            non_occupied_cars = list(filter(lambda c: len(c.passengers_list) == 0, cars))
             if len(non_occupied_cars) <= 0:
                 continue
-            (shortest_path, car) = get_shortest_path_for_passenger(non_occupied_cars, passenger, cache["grid"], cache["dynamic_paths_collection"])
+            (shortest_path, car) = get_shortest_path_for_passenger(non_occupied_cars, passenger, cache["grid"],
+                                                                   cache["dynamic_paths_collection"])
             car.path = shortest_path
             car.passengers_list.append(passenger.id)
             passenger.car_id = car.id
@@ -178,15 +177,16 @@ def update(cache):
 
     move_cars(cars, passengers, cache["served_passengers"])
     move_cars(taxi_cars, taxi_passengers, cache["served_taxi_passengers"])
-    
+
     car_pooling_update(cache)
     regular_update(cache)
 
     current_next_passenger_spawn = cache["next_passenger_spawn"]
     if current_next_passenger_spawn == 0:
         new_passenger = Passenger(cache["valid_positions"], cache["random"])
+        new_taxi_passenger = copy.deepcopy(new_passenger)
         cache["passengers"][new_passenger.id] = new_passenger
-        cache["taxi_passengers"][new_passenger.id] = new_passenger
+        cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
         cache["next_passenger_spawn"] = cache["random"].randrange(cache["min_pass_spawn"], cache["max_pass_spawn"])
     else:
         cache["next_passenger_spawn"] -= 1

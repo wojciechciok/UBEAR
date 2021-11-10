@@ -42,6 +42,7 @@
     <script src="lib/chart/dist/chart.js"></script>
     <script src="lib/p5.min.js"></script>
     <script src="src/sketch.js"></script>
+    <script src="src/sketchTaxi.js"></script>
     <script src="src/Passenger.js"></script>
     <script src="src/City.js"></script>
     <script src="src/Car.js"></script>
@@ -139,22 +140,30 @@
           </button>
         </div>
         <div class="col text-center">
-          <h1>Regular Taxi Company</h1>
-          <hr />
-          <h3>Visualisation</h3>
-          <div class="block mx-auto" id="c1"></div>
-          <hr />
-          <h3>Metrics</h3>
-          <div class="block mx-auto">
-            <canvas id="taxiChart" width="500" height="500"></canvas>
+          <div class="row">
+            <div class="col"><h1>UBEAR Carpooling</h1></div>
+            <div class="col"><h1>Regular Taxi Company</h1></div>
           </div>
-        </div>
-        <div class="col text-center">
-          <h1>UBEAR Carpooling</h1>
           <hr />
-          <h3>Visualisation</h3>
+          <h2>Visualisation</h2>
+          <div class="row">
+            <div class="col"><div class="block mx-auto" id="c1"></div></div>
+            <div class="col"><div class="block mx-auto" id="c2"></div></div>
+          </div>
           <hr />
-          <h3>Metrics</h3>
+          <h2>Metrics</h2>
+          <div class="row">
+            <div class="col">
+              <div class="block mx-auto">
+                <canvas id="chart" width="500" height="500"></canvas>
+              </div>
+            </div>
+            <div class="col">
+              <div class="block mx-auto">
+                <canvas id="taxiChart" width="500" height="500"></canvas>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </main>

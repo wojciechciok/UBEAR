@@ -8,7 +8,7 @@ const url = " http://localhost:105";
 // size of the map (width and height)
 const size = 500;
 // number of cells in a row
-const cellNum = 51;
+const cellNum = 21;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
@@ -64,14 +64,14 @@ let radioBtn;
 let updatesCounterElement;
 let updatesCounter = 0;
 
-//////////////////////////
-// REGULAR MODEL CANVAS //
-//////////////////////////
+////////////////////////
+// UBEAR MODEL CANVAS //
+////////////////////////
 
 let simulation1 = function (p) {
   // loading images
   p.preload = () => {
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i <= 4; i++) {
       carImgs[i] = p.loadImage(`../assets/taxi_${i}.png`);
     }
     passengerImg = p.loadImage("../assets/passenger.png");
@@ -125,12 +125,8 @@ let simulation1 = function (p) {
     const carsData = data.cars;
     const passengersData = data.passengers;
     const metrics = data.metrics;
-
-    // update chart
-    addData(taxiChart, "", [
-      metrics.cars.sum_travelled,
-      metrics.passengers.sum_travelled,
-    ]);
+    const taxiCarsData = data.taxi_cars;
+    const taxiPassengersData = data.taxi_passengers;
 
     // update cars
     for (let c of carsData) {
@@ -161,6 +157,36 @@ let simulation1 = function (p) {
         passengers[passenger.id].update(passenger.is_in_car);
       }
     }
+
+    // TAXIS:
+    for (let c of taxiCarsData) {
+      taxiCars[c.id].update(c.x, c.y, c.path, c.passengers_list);
+    }
+    const currentTaxiPassengersIDs = Object.keys(taxiPassengers);
+    taxiPassengersIDs = taxiPassengersData.map((p) => p.id);
+    // delete unused passengers
+    for (let key of currentTaxiPassengersIDs) {
+      if (!taxiPassengersIDs.includes(key)) {
+        delete taxiPassengers[key];
+      }
+    }
+    for (let passenger of taxiPassengersData) {
+      // add new passengers
+      if (!currentTaxiPassengersIDs.includes(passenger.id)) {
+        taxiPassengers[passenger.id] = new Passenger(
+          p,
+          passenger.id,
+          passenger.x,
+          passenger.y,
+          passenger.x_dest,
+          passenger.y_dest
+        );
+      }
+      // update passenger
+      else {
+        taxiPassengers[passenger.id].update(passenger.is_in_car);
+      }
+    }
     // draw the map
     map.show(p);
     // draw all cars
@@ -171,6 +197,17 @@ let simulation1 = function (p) {
     for (let passengerID of passengersIDs) {
       passengers[passengerID].show(p);
     }
+
+    // update chart
+    addData(taxiChart, "", [
+      metrics.taxi_cars.sum_travelled,
+      metrics.taxi_passengers.sum_travelled,
+    ]);
+
+    addData(chart, "", [
+      metrics.cars.sum_travelled,
+      metrics.passengers.sum_travelled,
+    ]);
   }
 
   p.mouseClicked = (event) => {
@@ -203,6 +240,7 @@ let simulation1 = function (p) {
 
         if (map.grid[x][y] != true) break;
         cars[taxiID] = placeTaxi(taxiID, x, y);
+        taxiCars[taxiID] = placeTaxi(taxiID, x, y);
         carsIDs.push(taxiID);
         tmpCars.push(cars[taxiID]);
         cars[taxiID].show(p);
@@ -218,6 +256,12 @@ let simulation1 = function (p) {
   function spawnAmountOfTaxis(amount) {
     for (let i = 0; i < amount; i++) {
       cars[carsIDs.length] = new Car(p, carsIDs.length);
+      taxiCars[carsIDs.length] = new Car(
+        p,
+        carsIDs.length,
+        cars[carsIDs.length].x,
+        cars[carsIDs.length].y
+      );
       carsIDs.push(carsIDs.length);
     }
   }
@@ -226,6 +270,7 @@ let simulation1 = function (p) {
     updatesCounter = 0;
     simulationStarted = true;
     resetChart(taxiChart);
+    resetChart(chart);
     for (let x = 0; x < map.grid.length; x++) {
       for (let y = 0; y < map.grid[x].length; y++) {
         if (map.grid[x][y]) {
