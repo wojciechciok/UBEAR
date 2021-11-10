@@ -31,6 +31,7 @@ def init_single(content):
     cache["valid_positions"] = get_valid_passenger_positions(grid)
     cache["cars"] = list(map(lambda car: Car(car["x"], car["y"], car["id"]), content["cars"]))
     cache["passengers"] = {}
+    cache["served_passengers"] = []
     cache["next_passenger_spawn"] = 0
     random = Random()
     random.seed(42)
