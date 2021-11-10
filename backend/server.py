@@ -8,6 +8,7 @@ import uuid
 from random import Random
 import threading
 from simulation_threads import thread_creator, init_single
+
 # in seconds
 FRAME_RATE = 1 / 5
 
@@ -54,7 +55,7 @@ def get_cars_positions(guid):
             time.sleep(refresh_time)
             has_finished = update(cache)
             if has_finished:
-                yield 'data: {0}\n\n'.format(json.dumps({'finished': True}))
+                yield 'data: {0}\n\n'.format(json.dumps({'finished': True, 'metrics': {}}))
                 break
             if not has_finished:
                 response = get_passengers_and_cars_json(cache)

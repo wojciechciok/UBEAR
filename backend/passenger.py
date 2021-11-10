@@ -1,6 +1,5 @@
 import uuid
 
-
 class Passenger:
     def __init__(self, valid_positions, random):
         (x, y) = get_valid_passenger_position(valid_positions, random)
@@ -12,9 +11,6 @@ class Passenger:
         self.car_id = None
         self.id = str(uuid.uuid4())
         self.is_in_car = False
-        self.waited_for_car = 0  # time spent outside of a car
-        self.traveled = 0  # time spent in a car
-
 
 def get_valid_passenger_position(valid_positions, random):
     return random.choice(valid_positions)

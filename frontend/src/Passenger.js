@@ -1,5 +1,5 @@
 class Passenger {
-  constructor(p, id, x, y, destX, destY) {
+  constructor(id, x, y, destX, destY) {
     this.x = x;
     this.y = y;
     this.destX = destX;
@@ -8,18 +8,18 @@ class Passenger {
     // this.carAssigned = false;
     this.inCar = false;
     this.id = id;
-    this.color = p.color(p.random(255), p.random(255), p.random(255));
+    this.color = color(random(255), random(255), random(255));
     this.selectPlaceForDrawing();
   }
   update(inCar) {
     this.inCar = inCar;
   }
-  show(p) {
+  show() {
     // draw circle on destination
-    p.noFill();
-    p.stroke(this.color);
-    p.strokeWeight(3);
-    p.circle(
+    noFill();
+    stroke(this.color);
+    strokeWeight(3);
+    circle(
       (this.destX + 0.5) * cellSize,
       (this.destY + 0.5) * cellSize,
       cellSize - 4
@@ -28,16 +28,16 @@ class Passenger {
     if (this.inCar) return;
 
     //draw circle on passenger
-    p.noFill();
-    p.stroke(this.color);
-    p.strokeWeight(3);
-    p.circle(
+    noFill();
+    stroke(this.color);
+    strokeWeight(3);
+    circle(
       (this.drawX + 0.5) * cellSize,
       (this.drawY + 0.5) * cellSize,
       cellSize - 4
     );
     // draw passenger image
-    p.image(
+    image(
       passengerImg,
       this.drawX * cellSize,
       this.drawY * cellSize,
