@@ -20,9 +20,14 @@ let simulation2 = function (p) {
     taxiMap.show(p);
   };
   p.draw = () => {
-    if (updatesCounter <= 0) return;
     // draw the map
     taxiMap.show(p);
+
+    if (updatesCounter <= 0) {
+      p.fill(0, 0, 0, 170);
+      p.square(0, 0, size);
+      return;
+    }
     // draw all cars
     for (let carID of carsIDs) {
       taxiCars[carID].show(p);

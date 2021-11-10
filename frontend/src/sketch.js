@@ -225,6 +225,7 @@ let simulation1 = function (p) {
     switch (v) {
       case "Road construction":
         map.roadConstruction(x, y);
+        taxiMap.roadConstruction(x, y);
         map.show(p);
         for (c in cars) {
           if (cars[c].x == x && cars[c].y == y) {
