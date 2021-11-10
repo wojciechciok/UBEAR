@@ -5,6 +5,7 @@ from car import Car
 from uuid import uuid4
 from map_helpers import update
 import json
+import copy
 
 def thread_creator(amount, content):
     threads = []
@@ -30,8 +31,11 @@ def init_single(content):
     cache["grid"] = grid
     cache["valid_positions"] = get_valid_passenger_positions(grid)
     cache["cars"] = list(map(lambda car: Car(car["x"], car["y"], car["id"]), content["cars"]))
+    cache["taxi_cars"] = copy.deepcopy(cache["cars"])
     cache["passengers"] = {}
     cache["served_passengers"] = []
+    cache["served_taxi_passengers"] = []
+    cache["taxi_passengers"] = {}
     cache["next_passenger_spawn"] = 0
     random = Random()
     random.seed(42)
@@ -39,6 +43,7 @@ def init_single(content):
     cache["guid"] = str(uuid4())
     cache["min_pass_spawn"] = content["minPassSpawn"]
     cache["max_pass_spawn"] = content["maxPassSpawn"]
+    cache["dynamic_paths_collection"] = {}
 
     return cache
 

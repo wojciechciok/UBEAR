@@ -5,62 +5,166 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>UBEAR</title>
     <style>
+      .radio > input {
+        position: absolute;
+        margin-top: 0.3rem;
+        margin-left: -1.25rem;
+      }
+      .block {
+        width: 500px;
+        width: 500px;
+        display: block;
+      }
+      .ubear-color-100 {
+        color: #805c53;
+      }
+      .ubear-color-80 {
+        color: #b5957c;
+      }
+      .ubear-bg-100 {
+        background-color: #805c53;
+      }
+      .ubear-bg-80 {
+        background-color: #b5957c;
+      }
+
       body {
         padding-top: 0;
         margin-top: 0;
       }
-      p {
-        margin: 0;
-      }
     </style>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
     <script src="lib/chart/dist/chart.js"></script>
     <script src="lib/p5.min.js"></script>
     <script src="src/sketch.js"></script>
+    <script src="src/sketchTaxi.js"></script>
     <script src="src/Passenger.js"></script>
     <script src="src/City.js"></script>
     <script src="src/Car.js"></script>
   </head>
 
-  <body>
+  <body class="ubear-bg-100">
+    <h3
+      class="fixed-top"
+      style="
+        background-color: rgba(255, 255, 255, 0.3);
+        width: min-content;
+        left: auto;
+        border-radius: 0 0 0 10px;
+        padding: 10px;
+      "
+      id="updatesCounter"
+    >
+      0
+    </h3>
     <main>
-      <div
-        style="
-          display: grid;
-          grid-template-columns: 500px 500px;
-          grid-gap: 30px;
-        "
-      >
-        <div style="grid-column: 1/3">
-          <h3
-            style="position: absolute; right: 0; margin-right: 20px"
-            id="updatesCounter"
-          >
-            0
-          </h3>
-          <p style="display: inline-block">Max Updates</p>
-          <input id="maxUpdatesInput" value="50" type="number" />
-          <br />
-          <p style="display: inline-block">
-            Minimum value for passenger spawning interval
-          </p>
-          <input id="minPassengerSpawnIntervalInput" value="1" type="number" />
-          <br />
-          <p style="display: inline-block">
-            Maximum value for passenger spawning interval
-          </p>
-          <input id="maxPassengerSpawnIntervalInput" value="10" type="number" />
-          <br />
-          <p style="display: inline-block">Spawn taxis randomly</p>
-          <input id="randomTaxiSpawnInput" value="0" type="number" />
+      <div class="row m-3">
+        <div
+          class="col ubear-bg-80"
+          style="
+            max-width: 300px;
+            border-radius: 30px;
+            padding: 25px;
+            height: fit-content;
+          "
+        >
+          <img
+            src="./assets/ubear.png"
+            class="img-fluid mx-auto d-block"
+            alt="Responsive image"
+            style="max-width: 70%"
+          />
+          <div class="text-center">
+            <h1 class="ubear-color-100">UBEAR</h1>
+          </div>
+          <div class="form-group">
+            <label for="maxUpdatesInput">Max updates</label>
+            <input
+              type="number"
+              class="form-control"
+              id="maxUpdatesInput"
+              value="50"
+            />
+          </div>
+          <div class="form-group">
+            <label for="minPassengerSpawnIntervalInput"
+              >Minimum value for passenger spawning interval</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              id="minPassengerSpawnIntervalInput"
+              value="1"
+            />
+          </div>
+          <div class="form-group">
+            <label for="maxPassengerSpawnIntervalInput"
+              >Maximum value for passenger spawning interval</label
+            >
+            <input
+              type="number"
+              class="form-control"
+              id="maxPassengerSpawnIntervalInput"
+              value="10"
+            />
+          </div>
+          <div class="form-group">
+            <label for="randomTaxiSpawnInput">Spawn taxis randomly</label>
+            <input
+              type="number"
+              class="form-control"
+              id="randomTaxiSpawnInput"
+              value="0"
+            />
+          </div>
+
           <div id="mapModeRadioButton"></div>
-          <div id="visualisationCheckbox"></div>
-          <button id="startButton">Start Simulation</button>
+
+          <div class="form-group form-check">
+            <input
+              type="checkbox"
+              class="form-check-input"
+              id="visualisationCheckbox"
+            />
+            <label class="form-check-label" for="visualisationCheckbox"
+              >No visualisation</label
+            >
+          </div>
+          <button type="button" class="btn btn-light" id="startButton">
+            Start Simulation
+          </button>
         </div>
-        <div id="c1"></div>
-        <div style="width: 500px; width: 500px">
-          <canvas id="chart" width="500" height="500"></canvas>
+        <div class="col text-center">
+          <div class="row">
+            <div class="col"><h1>UBEAR Carpooling</h1></div>
+            <div class="col"><h1>Regular Taxi Company</h1></div>
+          </div>
+          <hr />
+          <h2>Visualisation</h2>
+          <div class="row">
+            <div class="col"><div class="block mx-auto" id="c1"></div></div>
+            <div class="col"><div class="block mx-auto" id="c2"></div></div>
+          </div>
+          <hr />
+          <h2>Metrics</h2>
+          <div class="row">
+            <div class="col">
+              <div class="block mx-auto">
+                <canvas id="chart" width="500" height="500"></canvas>
+              </div>
+            </div>
+            <div class="col">
+              <div class="block mx-auto">
+                <canvas id="taxiChart" width="500" height="500"></canvas>
+              </div>
+            </div>
+          </div>
         </div>
-        <!-- <div id="c2"></div> -->
       </div>
     </main>
   </body>

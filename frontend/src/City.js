@@ -19,8 +19,8 @@ class City {
     for (let i = 0; i < this.grid.length; i++) {
       for (let j = 0; j < this.grid.length; j++) {
         p.noStroke();
-        if (this.grid[i][j]) p.fill(50);
-        else p.fill(150);
+        if (this.grid[i][j]) p.fill(70);
+        else p.fill(140);
         p.square(i * cellSize, j * cellSize, cellSize);
       }
     }

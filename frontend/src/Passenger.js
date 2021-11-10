@@ -18,7 +18,7 @@ class Passenger {
     // draw circle on destination
     p.noFill();
     p.stroke(this.color);
-    p.strokeWeight(3);
+    p.strokeWeight(2);
     p.circle(
       (this.destX + 0.5) * cellSize,
       (this.destY + 0.5) * cellSize,
@@ -30,7 +30,7 @@ class Passenger {
     //draw circle on passenger
     p.noFill();
     p.stroke(this.color);
-    p.strokeWeight(3);
+    p.strokeWeight(2);
     p.circle(
       (this.drawX + 0.5) * cellSize,
       (this.drawY + 0.5) * cellSize,
