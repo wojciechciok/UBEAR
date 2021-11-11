@@ -44,6 +44,12 @@ def init_single(content):
     cache["min_pass_spawn"] = content["minPassSpawn"]
     cache["max_pass_spawn"] = content["maxPassSpawn"]
     cache["dynamic_paths_collection"] = {}
+    cache["update_Num_Loc_Hotspot"] = content["updateNumLocHotspot"]
+    cache["pass_Num_Loc_Hotspot"] = content["hotspotPassNumber"]
+    cache["update_Num_Dest_Hotspot"] = content["updateNumDestHotspot"]
+    cache["enable_hotspots"] = content["enableHotspots"]
+    cache["hotspot_Loc_y"] = content["yHotspotLoc"]
+    cache["hotspot_Loc_x"] = content["xHotspotLoc"]
 
     return cache
 

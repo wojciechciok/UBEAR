@@ -1,8 +1,7 @@
 import random
 import threading
-
 from pathfinder import get_cars_in_patience_range, get_shortest_path_for_passenger, get_path, manhattan_distance
-from passenger import Passenger
+from passenger import Passenger, PassengerHotspotDest, PassengerHotspotLoc
 import json
 from json import JSONEncoder
 from metrics import get_all_metrics
@@ -181,6 +180,7 @@ def update(cache):
     car_pooling_update(cache)
     regular_update(cache)
 
+    # random passenger spawning
     current_next_passenger_spawn = cache["next_passenger_spawn"]
     if current_next_passenger_spawn == 0:
         new_passenger = Passenger(cache["valid_positions"], cache["random"])
@@ -190,6 +190,19 @@ def update(cache):
         cache["next_passenger_spawn"] = cache["random"].randrange(cache["min_pass_spawn"], cache["max_pass_spawn"])
     else:
         cache["next_passenger_spawn"] -= 1
+
+    # passenger spawning for hotspots in which all passengers are in the same location
+    if(cache["ticks"] == cache["update_Num_Loc_Hotspot"] and cache["enable_hotspots"]):
+        for i in range(cache["pass_Num_Loc_Hotspot"]):
+            new_passenger = PassengerHotspotLoc(cache["valid_positions"], cache["hotspot_Loc_x"], cache["hotspot_Loc_y"], cache["random"])
+            cache["passengers"][new_passenger.id] = new_passenger
+
+    # passenger spawning for hotspots in which all passengers go to the same location
+    if(cache["ticks"] == cache["update_Num_Dest_Hotspot"] and cache["enable_hotspots"]):
+        for i in range(cache["pass_Num_Loc_Hotspot"]):
+            new_passenger = PassengerHotspotDest(cache["valid_positions"], cache["hotspot_Loc_x"], cache["hotspot_Loc_y"], cache["random"])
+            cache["passengers"][new_passenger.id] = new_passenger
+
 
     cache["ticks"] = cache["ticks"] + 1
     return False
