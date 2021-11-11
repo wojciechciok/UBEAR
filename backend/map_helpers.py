@@ -195,13 +195,19 @@ def update(cache):
     if(cache["ticks"] == cache["update_Num_Loc_Hotspot"] and cache["enable_hotspots"]):
         for i in range(cache["pass_Num_Loc_Hotspot"]):
             new_passenger = PassengerHotspotLoc(cache["valid_positions"], cache["hotspot_Loc_x"], cache["hotspot_Loc_y"], cache["random"])
+            new_taxi_passenger = copy.deepcopy(new_passenger)
             cache["passengers"][new_passenger.id] = new_passenger
+            cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
+
 
     # passenger spawning for hotspots in which all passengers go to the same location
     if(cache["ticks"] == cache["update_Num_Dest_Hotspot"] and cache["enable_hotspots"]):
         for i in range(cache["pass_Num_Loc_Hotspot"]):
             new_passenger = PassengerHotspotDest(cache["valid_positions"], cache["hotspot_Loc_x"], cache["hotspot_Loc_y"], cache["random"])
+            new_taxi_passenger = copy.deepcopy(new_passenger)
             cache["passengers"][new_passenger.id] = new_passenger
+            cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
+
 
 
     cache["ticks"] = cache["ticks"] + 1
