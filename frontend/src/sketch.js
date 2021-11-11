@@ -8,7 +8,7 @@ const url = " http://localhost:105";
 // size of the map (width and height)
 const size = 500;
 // number of cells in a row
-const cellNum = 21;
+let cellNum = 21;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
@@ -23,7 +23,7 @@ const refreshRate = 15;
 // event source https://developer.mozilla.org/en-US/docs/Web/API/EventSource
 let eventSource;
 // size of a cell in pixels
-const cellSize = size / cellNum;
+let cellSize = size / cellNum;
 // global object of the map see Map.js
 let map;
 // global object of cars see Car.js
@@ -54,15 +54,22 @@ let inputMaxUpdates;
 let inputPassSpawnMin;
 // Passanger spawn maximum
 let inputPassSpawnMax;
+
+let inputMapSize;
 // if checked, simulation will be performed without visualization (as fast as possible)
 let noVisualizationCheckBox;
 // Start Button
 let startButton;
+
+let saveConfigButton;
 // Road Construction, Taxi radio
 let radioBtn;
 // updates counter
 let updatesCounterElement;
 let updatesCounter = 0;
+
+let button2;
+let button3;
 
 ////////////////////////
 // UBEAR MODEL CANVAS //
@@ -89,6 +96,8 @@ let simulation1 = function (p) {
     // Maximum interval time for passanger spawning
     inputPassSpawnMax = p.select("#maxPassengerSpawnIntervalInput");
 
+    inputMapSize = p.select("#mapSize");
+
     // initialize map
     map = new City(cellNum);
 
@@ -98,6 +107,13 @@ let simulation1 = function (p) {
     // Create Button
     button = p.select("#startButton");
     button.mousePressed(startSimulation);
+
+    button2 = p.select("#saveConfigButton");
+    button2.mousePressed(saveData);
+
+    button3 = p.select("#refreshMapSize");
+    button3.mousePressed(refreshMapSize);
+    
 
     // Create Radio Buttons
     let radioWrapper = p.select("#mapModeRadioButton");
@@ -253,6 +269,13 @@ let simulation1 = function (p) {
     return new Car(p, id, x, y);
   }
 
+  function saveData(){
+    //console.log("s");
+    let data = {};
+    data.maxUpdates = inputMaxUpdates.value();
+    p.saveJSON(data, 'data.json');
+  }
+
   // spawns taxis based on the spawn taxi input field
   function spawnAmountOfTaxis(amount) {
     for (let i = 0; i < amount; i++) {
@@ -265,6 +288,15 @@ let simulation1 = function (p) {
       );
       carsIDs.push(carsIDs.length);
     }
+  }
+
+  function refreshMapSize() {
+  
+    if  (simulationStarted) {return}
+    cellNum =  inputMapSize.value();
+    cellSize = size / cellNum;
+    map = new City(cellNum);
+    map.show();
   }
 
   function startSimulation() {
