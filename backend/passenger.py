@@ -28,6 +28,10 @@ class PassengerHotspotLoc:
         self.car_id = None
         self.id = str(uuid.uuid4())
         self.is_in_car = False
+        self.waited_for_car = 0  # time spent outside of a car
+        self.traveled = 0  # time spent in a car
+
+        self.shortest_path_length = None
 
 class PassengerHotspotDest:
     def __init__(self, valid_positions, x_dest, y_dest, random):
@@ -40,6 +44,10 @@ class PassengerHotspotDest:
         self.car_id = None
         self.id = str(uuid.uuid4())
         self.is_in_car = False
+        self.waited_for_car = 0  # time spent outside of a car
+        self.traveled = 0  # time spent in a car
+
+        self.shortest_path_length = None
 
 def get_valid_passenger_position(valid_positions, random):
     return random.choice(valid_positions)
