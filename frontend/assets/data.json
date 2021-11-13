@@ -1,3 +1,4 @@
 {
-  "maxUpdates": "40"
+  "maxUpdates": "35",
+  "mapSize": "11"
 }
