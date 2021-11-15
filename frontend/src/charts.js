@@ -1,9 +1,8 @@
-function addData(chart, label, data, maxY) {
+function addData(chart, label, data) {
   chart.data.labels.push(label);
   for (let i = 0; i < data.length; i++) {
     chart.data.datasets[i].data.push(data[i]);
   }
-  if (maxY !== undefined) chart.options.scales.y.max = maxY;
   chart.update();
 }
 
@@ -22,14 +21,14 @@ const chart = new Chart(ctx, {
     labels: [],
     datasets: [
       {
-        label: "Total distance traveled by the UBEAR vehicles",
+        label: "Total distance traveled by the vehicles",
         data: [],
         fill: true,
         borderColor: "rgb(75, 192, 192)",
         tension: 0.1,
       },
       {
-        label: "Total distance traveled by the UBEAR passengers",
+        label: "Total distance traveled by the passengers",
         data: [],
         fill: true,
         borderColor: "rgb(182, 101, 122)",
@@ -68,14 +67,14 @@ const taxiChart = new Chart(taxiCtx, {
     labels: [],
     datasets: [
       {
-        label: "Total distance traveled by the taxi vehicles",
+        label: "Total distance traveled by the vehicles",
         data: [],
         fill: true,
         borderColor: "rgb(75, 192, 192)",
         tension: 0.1,
       },
       {
-        label: "Total distance traveled by the taxi passengers",
+        label: "Total distance traveled by the passengers",
         data: [],
         fill: true,
         borderColor: "rgb(182, 101, 122)",

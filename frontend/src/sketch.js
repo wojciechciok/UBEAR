@@ -197,26 +197,17 @@ let simulation1 = function (p) {
     for (let passengerID of passengersIDs) {
       passengers[passengerID].show(p);
     }
-    const maxY = Math.max(
+
+    // update chart
+    addData(taxiChart, "", [
       metrics.taxi_cars.sum_travelled,
       metrics.taxi_passengers.sum_travelled,
-      metrics.cars.sum_travelled,
-      metrics.passengers.sum_travelled
-    );
-    // update chart
-    addData(
-      taxiChart,
-      "",
-      [metrics.taxi_cars.sum_travelled, metrics.taxi_passengers.sum_travelled],
-      maxY
-    );
+    ]);
 
-    addData(
-      chart,
-      "",
-      [metrics.cars.sum_travelled, metrics.passengers.sum_travelled],
-      maxY
-    );
+    addData(chart, "", [
+      metrics.cars.sum_travelled,
+      metrics.passengers.sum_travelled,
+    ]);
   }
 
   p.mouseClicked = (event) => {
