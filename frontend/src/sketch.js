@@ -6,7 +6,7 @@ const url = " http://localhost:105";
 ///////////////
 
 // size of the map (width and height)
-const size = 500;
+let size = 500;
 // number of cells in a row
 let cellNum = 21;
 // how wide is one block (how many cells separate two streets)
@@ -121,7 +121,7 @@ let simulation1 = function (p) {
     //button4.mousePressed(loadConfig);
 
     buttonLoad = p.select("#loadConfigButton")
-    buttonLoad.mousePressed(loadConfig);
+    buttonLoad.mousePressed(onLoadConfigButtonPressed);
 
     // Create Radio Buttons
     let radioWrapper = p.select("#mapModeRadioButton");
@@ -282,6 +282,18 @@ let simulation1 = function (p) {
     let data = {};
     data.maxUpdates = inputMaxUpdates.value();
     data.mapSize = inputMapSize.value();
+    let carsToSave = {};
+    for (let car of Object.values(cars)){
+      const carToSave = {
+        id: car.id,
+        x: car.x,
+        y: car.y
+      };
+      carsToSave[carToSave.id] = carToSave;
+    }
+    data.cars = carsToSave;
+    data.carsIDs = carsIDs;
+    data.mapSize = inputMapSize.value();
     p.saveJSON(data, 'data.json');
   }
 
@@ -301,16 +313,37 @@ let simulation1 = function (p) {
 
   function refreshMapSize() {
   
-    if  (simulationStarted) {return}
+    if  (simulationStarted) {
+      return;
+    }
     cellNum =  inputMapSize.value();
     cellSize = size / cellNum;
     map = new City(cellNum);
-    map.show();
+    map.show(p);
+    taxiMap = new City(cellNum);
+    taxiMap.show(p);
   }
 
-  function loadConfig() {
+  function onLoadConfigButtonPressed() {
+    function loadConfig(data){
+      inputMapSize.value(data.mapSize);
+      cellSize = size / cellNum;
+      refreshMapSize();
+      for (let carObj of Object.values(data.cars)){
+        const car = new Car(p, carObj.id, carObj.x, carObj.y);
+        const taxiCar = new Car(p, carObj.id, carObj.x, carObj.y);
+        cars[car.id] = car;
+        taxiCars[taxiCar.id] = taxiCar;
+        car.show(p);
+        taxiCar.show(p);
+      }
+      carsIDs = data.carsIDs;
+      inputMaxUpdates.value(68) // data.inputMaxUpdates
+
+    }
+
     console.log("hi");
-    data = p.loadJSON('assets/data.json');
+    p.loadJSON('assets/data.json', loadConfig);
     //var mydata = JSON.parse(data);
     //const myObj = JSON.parse(data);
     //x = data["mapSize"];
@@ -318,8 +351,8 @@ let simulation1 = function (p) {
     //console.log(ejemplo);
     //const myJSON = p.loadJSON('assets/data.json');
     //const myObj = JSON.parse(myJSON);
-    x = data.mapSize;
-    console.log(data);
+    // x = data.mapSize;
+    // console.log(data);
   }
 
   function startSimulation() {

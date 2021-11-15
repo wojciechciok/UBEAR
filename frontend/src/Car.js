@@ -16,6 +16,7 @@ class Car {
     this.passengersList = [];
     this.dir = [0, -1];
   }
+
   // drawing a car
   show(p) {
     // mambo jumbo for correct orientation of the car image
