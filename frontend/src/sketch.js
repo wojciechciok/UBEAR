@@ -70,6 +70,9 @@ let updatesCounter = 0;
 
 let button2;
 let button3;
+let button4;
+
+
 
 ////////////////////////
 // UBEAR MODEL CANVAS //
@@ -114,6 +117,11 @@ let simulation1 = function (p) {
     button3 = p.select("#refreshMapSize");
     button3.mousePressed(refreshMapSize);
     
+    //button4 = p.select("#loadConfigButton");
+    //button4.mousePressed(loadConfig);
+
+    buttonLoad = p.select("#loadConfigButton")
+    buttonLoad.mousePressed(loadConfig);
 
     // Create Radio Buttons
     let radioWrapper = p.select("#mapModeRadioButton");
@@ -273,6 +281,7 @@ let simulation1 = function (p) {
     //console.log("s");
     let data = {};
     data.maxUpdates = inputMaxUpdates.value();
+    data.mapSize = inputMapSize.value();
     p.saveJSON(data, 'data.json');
   }
 
@@ -297,6 +306,20 @@ let simulation1 = function (p) {
     cellSize = size / cellNum;
     map = new City(cellNum);
     map.show();
+  }
+
+  function loadConfig() {
+    console.log("hi");
+    data = p.loadJSON('assets/data.json');
+    //var mydata = JSON.parse(data);
+    //const myObj = JSON.parse(data);
+    //x = data["mapSize"];
+    //ejemplo = data.getInt("mapSize");
+    //console.log(ejemplo);
+    //const myJSON = p.loadJSON('assets/data.json');
+    //const myObj = JSON.parse(myJSON);
+    x = data.mapSize;
+    console.log(data);
   }
 
   function startSimulation() {
