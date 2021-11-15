@@ -217,6 +217,11 @@ let simulation1 = function (p) {
       [metrics.cars.sum_travelled, metrics.passengers.sum_travelled],
       maxY
     );
+
+    addData(passengersServedChart, "", [
+      metrics.served_passengers_count,
+      metrics.served_taxi_passengers_count,
+    ]);
   }
 
   p.mouseClicked = (event) => {

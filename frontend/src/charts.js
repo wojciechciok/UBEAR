@@ -1,108 +1,38 @@
-function addData(chart, label, data, maxY) {
-  chart.data.labels.push(label);
-  for (let i = 0; i < data.length; i++) {
-    chart.data.datasets[i].data.push(data[i]);
-  }
-  if (maxY !== undefined) chart.options.scales.y.max = maxY;
-  chart.update();
-}
+const chart = createChart("chart", [
+  {
+    label: "Total distance traveled by the UBEAR vehicles",
+    borderColor: "rgb(75, 192, 192)",
+    tension: 0.1,
+  },
+  {
+    label: "Total distance traveled by the UBEAR passengers",
+    borderColor: "rgb(182, 101, 122)",
+    tension: 0.1,
+  },
+]);
 
-function resetChart(chart) {
-  chart.data.datasets.forEach((dataset) => {
-    dataset.data = [];
-  });
-  chart.data.labels = [];
-}
+const taxiChart = createChart("taxiChart", [
+  {
+    label: "Total distance traveled by the taxi vehicles",
+    borderColor: "rgb(75, 192, 192)",
+    tension: 0.1,
+  },
+  {
+    label: "Total distance traveled by the taxi passengers",
+    borderColor: "rgb(182, 101, 122)",
+    tension: 0.1,
+  },
+]);
 
-Chart.defaults.color = "#fff";
-const ctx = document.getElementById("chart").getContext("2d");
-const chart = new Chart(ctx, {
-  type: "line",
-  data: {
-    labels: [],
-    datasets: [
-      {
-        label: "Total distance traveled by the UBEAR vehicles",
-        data: [],
-        fill: true,
-        borderColor: "rgb(75, 192, 192)",
-        tension: 0.1,
-      },
-      {
-        label: "Total distance traveled by the UBEAR passengers",
-        data: [],
-        fill: true,
-        borderColor: "rgb(182, 101, 122)",
-        tension: 0.1,
-      },
-    ],
+const passengersServedChart = createChart("passengersServed", [
+  {
+    label: "Number of passengers served by UBEAR",
+    borderColor: "rgb(75, 192, 192)",
+    tension: 0.4,
   },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          display: false,
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-      },
-    },
-    plugins: {
-      tooltip: {
-        enabled: false,
-      },
-    },
-    animation: false,
-    radius: 0,
+  {
+    label: "Number of passengers served with taxis",
+    borderColor: "rgb(182, 101, 122)",
+    tension: 0.4,
   },
-});
-
-const taxiCtx = document.getElementById("taxiChart").getContext("2d");
-const taxiChart = new Chart(taxiCtx, {
-  type: "line",
-  data: {
-    labels: [],
-    datasets: [
-      {
-        label: "Total distance traveled by the taxi vehicles",
-        data: [],
-        fill: true,
-        borderColor: "rgb(75, 192, 192)",
-        tension: 0.1,
-      },
-      {
-        label: "Total distance traveled by the taxi passengers",
-        data: [],
-        fill: true,
-        borderColor: "rgb(182, 101, 122)",
-        tension: 0.1,
-      },
-    ],
-  },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true,
-        grid: {
-          display: false,
-        },
-      },
-      x: {
-        grid: {
-          display: false,
-        },
-      },
-    },
-    plugins: {
-      tooltip: {
-        enabled: false,
-      },
-    },
-    animation: false,
-    radius: 0,
-  },
-});
+]);
