@@ -197,7 +197,7 @@ let simulation1 = function (p) {
     for (let passengerID of passengersIDs) {
       passengers[passengerID].show(p);
     }
-    const maxY = Math.max(
+    let maxY = Math.max(
       metrics.taxi_cars.sum_travelled,
       metrics.taxi_passengers.sum_travelled,
       metrics.cars.sum_travelled,
@@ -221,6 +221,23 @@ let simulation1 = function (p) {
     addData(passengersServedChart, "", [
       metrics.served_passengers_count,
       metrics.served_taxi_passengers_count,
+    ]);
+
+    addData(passengersWaitingStatsChart, "", [
+      metrics.passengers.mean_waited_for_car,
+      metrics.taxi_passengers.mean_waited_for_car,
+    ]);
+
+    addData(passengersTravelTimeChart, "", [
+      metrics.passengers.mean_travelled,
+      metrics.taxi_passengers.mean_travelled,
+    ]);
+
+    addData(passengersTimeSavedChart, "", [
+      metrics.taxi_passengers.mean_waited_for_car +
+        metrics.taxi_passengers.mean_travelled -
+        (metrics.passengers.mean_waited_for_car +
+          metrics.passengers.mean_travelled),
     ]);
   }
 
@@ -286,6 +303,11 @@ let simulation1 = function (p) {
     simulationStarted = true;
     resetChart(taxiChart);
     resetChart(chart);
+    resetChart(passengersServedChart);
+    resetChart(passengersWaitingStatsChart);
+    resetChart(passengersTravelTimeChart);
+    resetChart(passengersTimeSavedChart);
+
     for (let x = 0; x < map.grid.length; x++) {
       for (let y = 0; y < map.grid[x].length; y++) {
         if (map.grid[x][y]) {
