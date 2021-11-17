@@ -136,15 +136,8 @@ def car_pooling_update(cache):
                 # Schedule Computing Stage
                 possible_paths = PathsCollection()
 
-                threads = []
                 for car in cars_in_range:
-                    thread = threading.Thread(target=process_possible_paths_for_car,
-                                              args=(car, possible_paths, cache, passenger))
-                    threads.append(thread)
-                    thread.start()
-
-                for thread in threads:
-                    thread.join()
+                    process_possible_paths_for_car(car, possible_paths, cache, passenger)
 
                 if possible_paths.has_car_paths():
                     (car, best_path) = possible_paths.get_best_car_path()
@@ -205,15 +198,8 @@ def process_possible_paths_for_car(car, possible_paths, cache, passenger):
     passengers_combinations = combinations(car_passengers)
 
     # Time Limit filtering stage
-    threads = []
     for combination in passengers_combinations:
-        thread = threading.Thread(target=process_combination,
-                                  args=(car, combination, cache, car_passengers, passenger, valid_car_paths,))
-        threads.append(thread)
-        thread.start()
-
-    for thread in threads:
-        thread.join()
+        process_combination(car, combination, cache, car_passengers, passenger, valid_car_paths)
 
     if valid_car_paths.has_paths():
         possible_paths.add_car_paths(valid_car_paths)
