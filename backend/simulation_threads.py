@@ -52,8 +52,8 @@ def init_single(content):
         cache["update_num_dest_hotspot"] = content["updateNumDestHotspot"]
         cache["enable_hotspots"] = content["enableHotspots"]
         if cache["enable_hotspots"]:
-            cache["hotspot_Loc_y"] = content["yHotspotLoc"]
-            cache["hotspot_Loc_x"] = content["xHotspotLoc"]
+            cache["hotspot_loc_y"] = content["yHotspotLoc"]
+            cache["hotspot_loc_x"] = content["xHotspotLoc"]
 
     return cache
 
