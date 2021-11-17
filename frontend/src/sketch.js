@@ -8,7 +8,7 @@ const url = " http://localhost:105";
 // size of the map (width and height)
 const size = 500;
 // number of cells in a row
-const cellNum = 21;
+const cellNum = 41;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
@@ -73,7 +73,6 @@ let hotspotPositionX;
 let hotspotPositionY;
 let hotspotCoordinates;
 
-
 ////////////////////////
 // UBEAR MODEL CANVAS //
 ////////////////////////
@@ -89,7 +88,6 @@ let simulation1 = function (p) {
 
   // setup - this function is called once at the beginning of the program
   p.setup = () => {
-
     p.createCanvas(size, size);
 
     inputMaxUpdates = p.select("#maxUpdatesInput");
@@ -130,10 +128,10 @@ let simulation1 = function (p) {
 
     //hotspots inputs
 
-    hotspotsCheckbox = p.select("#hotspotsCheckbox")
-    hotspotDestUpdateNumber = p.select("#hotspotDestUpdateNumber")
-    hotspotLocUpdateNumber = p.select("#hotspotLocUpdateNumber")
-    hotspotPassNumber = p.select("#hotspotPassNumber")
+    hotspotsCheckbox = p.select("#hotspotsCheckbox");
+    hotspotDestUpdateNumber = p.select("#hotspotDestUpdateNumber");
+    hotspotLocUpdateNumber = p.select("#hotspotLocUpdateNumber");
+    hotspotPassNumber = p.select("#hotspotPassNumber");
 
     let hotspotRadioWrapper = p.select("#mapHotspotPositionRadBtn");
     positionRadBtn = p.createRadio();
@@ -141,7 +139,8 @@ let simulation1 = function (p) {
     positionRadBtn.addClass("form-check");
     positionRadBtn.addClass("radio");
     positionRadBtn.option("Determine hotspot position");
-    document.getElementById('hotspotCoordinates').innerHTML = "Hotspot position:"
+    document.getElementById("hotspotCoordinates").innerHTML =
+      "Hotspot position:";
   };
 
   function update(data) {
@@ -248,14 +247,19 @@ let simulation1 = function (p) {
     let x = Math.floor(p.mouseX / cellSize);
     let y = Math.floor(p.mouseY / cellSize);
     let h = positionRadBtn.value();
-    switch (h){
+    switch (h) {
       case "Determine hotspot position":
-        if (map.grid[x][y] == 1){
+        if (map.grid[x][y] == 1) {
           hotspotPositionX = x;
           hotspotPositionY = y;
-          document.getElementById('hotspotCoordinates').innerHTML = "Hotspot position: (" + hotspotPositionX + ", " + hotspotPositionY + ")"
-        }else{
-          alert("Please select a road point in the map")
+          document.getElementById("hotspotCoordinates").innerHTML =
+            "Hotspot position: (" +
+            hotspotPositionX +
+            ", " +
+            hotspotPositionY +
+            ")";
+        } else {
+          alert("Please select a road point in the map");
         }
     }
     let v = radioBtn.value();

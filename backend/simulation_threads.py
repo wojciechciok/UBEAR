@@ -30,6 +30,7 @@ def init_single(content):
     max_updates = content["maxUpdates"]
     cache["maxTicks"] = max_updates if max_updates is not None else 1000
     cache["grid"] = grid
+    cache["passenger_waiting_patience"] = int(len(grid[0])/2)
     cache["valid_positions"] = get_valid_passenger_positions(grid)
     cache["cars"] = list(map(lambda car: Car(car["x"], car["y"], car["id"]), content["cars"]))
     cache["taxi_cars"] = copy.deepcopy(cache["cars"])
