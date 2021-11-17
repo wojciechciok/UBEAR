@@ -2,41 +2,16 @@ import uuid
 
 
 class Passenger:
-    def __init__(self, valid_positions, random):
-        (x, y) = get_valid_passenger_position(valid_positions, random)
-        (x_dest, y_dest) = get_valid_passenger_position(valid_positions, random)
-        self.x = x
-        self.y = y
-        self.x_dest = x_dest
-        self.y_dest = y_dest
-        self.car_id = None
-        self.id = str(uuid.uuid4())
-        self.is_in_car = False
-        self.waited_for_car = 0  # time spent outside of a car
-        self.traveled = 0  # time spent in a car
-
-        self.shortest_path_length = None
-
-class PassengerHotspotLoc:
-    def __init__(self, valid_positions, x, y, random):
-        (x, y) = (x, y)
-        (x_dest, y_dest) = get_valid_passenger_position(valid_positions, random)
-        self.x = x
-        self.y = y
-        self.x_dest = x_dest
-        self.y_dest = y_dest
-        self.car_id = None
-        self.id = str(uuid.uuid4())
-        self.is_in_car = False
-        self.waited_for_car = 0  # time spent outside of a car
-        self.traveled = 0  # time spent in a car
-
-        self.shortest_path_length = None
-
-class PassengerHotspotDest:
-    def __init__(self, valid_positions, x_dest, y_dest, random):
-        (x, y) = get_valid_passenger_position(valid_positions, random)
-        (x_dest, y_dest) = (x_dest, y_dest)
+    def __init__(self, valid_positions,random, x, y, dest_x, dest_y):  
+        if x is not None and y is not None:
+            (x, y) = (x, y)
+            (x_dest, y_dest) = get_valid_passenger_position(valid_positions, random)
+        elif dest_x is not None and dest_y is not None:
+            (x, y) = get_valid_passenger_position(valid_positions, random)
+            (x_dest, y_dest) = (dest_x, dest_y)
+        else:
+            (x, y) = get_valid_passenger_position(valid_positions, random)
+            (x_dest, y_dest) = get_valid_passenger_position(valid_positions, random)
         self.x = x
         self.y = y
         self.x_dest = x_dest

@@ -1,7 +1,7 @@
 import random
 import threading
 from pathfinder import get_cars_in_patience_range, get_shortest_path_for_passenger, get_path, manhattan_distance
-from passenger import Passenger, PassengerHotspotDest, PassengerHotspotLoc
+from passenger import Passenger
 import json
 from json import JSONEncoder
 from metrics import get_all_metrics
@@ -183,7 +183,7 @@ def update(cache):
     # random passenger spawning
     current_next_passenger_spawn = cache["next_passenger_spawn"]
     if current_next_passenger_spawn == 0:
-        new_passenger = Passenger(cache["valid_positions"], cache["random"])
+        new_passenger = Passenger(cache["valid_positions"], cache["random"], x=None, y=None, dest_x=None, dest_y=None)
         new_taxi_passenger = copy.deepcopy(new_passenger)
         cache["passengers"][new_passenger.id] = new_passenger
         cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
@@ -194,7 +194,7 @@ def update(cache):
     # passenger spawning for hotspots in which all passengers are in the same location
     if(cache["ticks"] == cache["update_Num_Loc_Hotspot"] and cache["enable_hotspots"]):
         for i in range(cache["pass_Num_Loc_Hotspot"]):
-            new_passenger = PassengerHotspotLoc(cache["valid_positions"], cache["hotspot_Loc_x"], cache["hotspot_Loc_y"], cache["random"])
+            new_passenger = Passenger(cache["valid_positions"], cache["random"], cache["hotspot_Loc_x"], cache["hotspot_Loc_y"], None, None )
             new_taxi_passenger = copy.deepcopy(new_passenger)
             cache["passengers"][new_passenger.id] = new_passenger
             cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
@@ -203,7 +203,7 @@ def update(cache):
     # passenger spawning for hotspots in which all passengers go to the same location
     if(cache["ticks"] == cache["update_Num_Dest_Hotspot"] and cache["enable_hotspots"]):
         for i in range(cache["pass_Num_Loc_Hotspot"]):
-            new_passenger = PassengerHotspotDest(cache["valid_positions"], cache["hotspot_Loc_x"], cache["hotspot_Loc_y"], cache["random"])
+            new_passenger = Passenger(cache["valid_positions"], cache["random"], None, None, cache["hotspot_Loc_x"], cache["hotspot_Loc_y"])
             new_taxi_passenger = copy.deepcopy(new_passenger)
             cache["passengers"][new_passenger.id] = new_passenger
             cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
