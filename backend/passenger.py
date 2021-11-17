@@ -2,7 +2,7 @@ import uuid
 
 
 class Passenger:
-    def __init__(self, valid_positions,random, x, y, dest_x, dest_y):  
+    def __init__(self, valid_positions, random, x=None, y=None, dest_x=None, dest_y=None):
         if x is not None and y is not None:
             (x, y) = (x, y)
             (x_dest, y_dest) = get_valid_passenger_position(valid_positions, random)
@@ -23,6 +23,7 @@ class Passenger:
         self.traveled = 0  # time spent in a car
 
         self.shortest_path_length = None
+
 
 def get_valid_passenger_position(valid_positions, random):
     return random.choice(valid_positions)

@@ -183,7 +183,7 @@ def update(cache):
     # random passenger spawning
     current_next_passenger_spawn = cache["next_passenger_spawn"]
     if current_next_passenger_spawn == 0:
-        new_passenger = Passenger(cache["valid_positions"], cache["random"], x=None, y=None, dest_x=None, dest_y=None)
+        new_passenger = Passenger(cache["valid_positions"], cache["random"])
         new_taxi_passenger = copy.deepcopy(new_passenger)
         cache["passengers"][new_passenger.id] = new_passenger
         cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
@@ -192,23 +192,23 @@ def update(cache):
         cache["next_passenger_spawn"] -= 1
 
     # passenger spawning for hotspots in which all passengers are in the same location
-    if(cache["ticks"] == cache["update_Num_Loc_Hotspot"] and cache["enable_hotspots"]):
-        for i in range(cache["pass_Num_Loc_Hotspot"]):
-            new_passenger = Passenger(cache["valid_positions"], cache["random"], cache["hotspot_Loc_x"], cache["hotspot_Loc_y"], None, None )
-            new_taxi_passenger = copy.deepcopy(new_passenger)
-            cache["passengers"][new_passenger.id] = new_passenger
-            cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
+    if cache["enable_hotspots"]:
+        if cache["ticks"] == cache["update_num_loc_hotspot"]:
+            for i in range(cache["pass_num_loc_hotspot"]):
+                new_passenger = Passenger(cache["valid_positions"], cache["random"], cache["hotspot_loc_x"],
+                                          cache["hotspot_loc_y"])
+                new_taxi_passenger = copy.deepcopy(new_passenger)
+                cache["passengers"][new_passenger.id] = new_passenger
+                cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
 
-
-    # passenger spawning for hotspots in which all passengers go to the same location
-    if(cache["ticks"] == cache["update_Num_Dest_Hotspot"] and cache["enable_hotspots"]):
-        for i in range(cache["pass_Num_Loc_Hotspot"]):
-            new_passenger = Passenger(cache["valid_positions"], cache["random"], None, None, cache["hotspot_Loc_x"], cache["hotspot_Loc_y"])
-            new_taxi_passenger = copy.deepcopy(new_passenger)
-            cache["passengers"][new_passenger.id] = new_passenger
-            cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
-
-
+        # passenger spawning for hotspots in which all passengers go to the same location
+        if cache["ticks"] == cache["update_num_dest_hotspot"]:
+            for i in range(cache["pass_num_loc_hotspot"]):
+                new_passenger = Passenger(cache["valid_positions"], cache["random"], dest_x=cache["hotspot_loc_x"],
+                                          dest_y=cache["hotspot_loc_y"])
+                new_taxi_passenger = copy.deepcopy(new_passenger)
+                cache["passengers"][new_passenger.id] = new_passenger
+                cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
 
     cache["ticks"] = cache["ticks"] + 1
     return False
