@@ -69,8 +69,9 @@ let hotspotDestUpdateNumber;
 let hotspotLocUpdateNumber;
 let hotspotPassNumber;
 let positionRadBtn;
-let hotspotPositionX = 0;
-let hotspotPositionY = 0;
+let hotspotPositionX;
+let hotspotPositionY;
+let hotspotCoordinates;
 
 
 ////////////////////////
@@ -140,7 +141,7 @@ let simulation1 = function (p) {
     positionRadBtn.addClass("form-check");
     positionRadBtn.addClass("radio");
     positionRadBtn.option("Determine hotspot position");
-    
+    document.getElementById('hotspotCoordinates').innerHTML = "Hotspot position:"
   };
 
   function update(data) {
@@ -246,9 +247,16 @@ let simulation1 = function (p) {
       return;
     let x = Math.floor(p.mouseX / cellSize);
     let y = Math.floor(p.mouseY / cellSize);
-    if(positionRadBtn.value() == "Determine hotspot position"){
-      hotspotPositionX = x;
-      hotspotPositionY = y;
+    let h = positionRadBtn.value();
+    switch (h){
+      case "Determine hotspot position":
+        if (map.grid[x][y] == 1){
+          hotspotPositionX = x;
+          hotspotPositionY = y;
+          document.getElementById('hotspotCoordinates').innerHTML = "Hotspot position: (" + hotspotPositionX + ", " + hotspotPositionY + ")"
+        }else{
+          alert("Please select a road point in the map")
+        }
     }
     let v = radioBtn.value();
     switch (v) {
