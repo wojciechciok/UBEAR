@@ -1,6 +1,5 @@
 import random
 import threading
-
 from pathfinder import get_cars_in_patience_range, get_shortest_path_for_passenger, get_path, manhattan_distance
 from passenger import Passenger
 import json
@@ -174,6 +173,7 @@ def update(cache):
     car_pooling_update(cache)
     regular_update(cache)
 
+    # random passenger spawning
     current_next_passenger_spawn = cache["next_passenger_spawn"]
     if current_next_passenger_spawn == 0:
         new_passenger = Passenger(cache["valid_positions"], cache["random"])
@@ -183,6 +183,25 @@ def update(cache):
         cache["next_passenger_spawn"] = cache["random"].randrange(cache["min_pass_spawn"], cache["max_pass_spawn"])
     else:
         cache["next_passenger_spawn"] -= 1
+
+    # passenger spawning for hotspots in which all passengers are in the same location
+    if cache["enable_hotspots"]:
+        if cache["ticks"] == cache["update_num_loc_hotspot"]:
+            for i in range(cache["pass_num_loc_hotspot"]):
+                new_passenger = Passenger(cache["valid_positions"], cache["random"], cache["hotspot_loc_x"],
+                                          cache["hotspot_loc_y"])
+                new_taxi_passenger = copy.deepcopy(new_passenger)
+                cache["passengers"][new_passenger.id] = new_passenger
+                cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
+
+        # passenger spawning for hotspots in which all passengers go to the same location
+        if cache["ticks"] == cache["update_num_dest_hotspot"]:
+            for i in range(cache["pass_num_loc_hotspot"]):
+                new_passenger = Passenger(cache["valid_positions"], cache["random"], dest_x=cache["hotspot_loc_x"],
+                                          dest_y=cache["hotspot_loc_y"])
+                new_taxi_passenger = copy.deepcopy(new_passenger)
+                cache["passengers"][new_passenger.id] = new_passenger
+                cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
 
     cache["ticks"] = cache["ticks"] + 1
     return False
