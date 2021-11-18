@@ -9,9 +9,7 @@ import copy
 from paths_collection import PathsCollection, ValidCarPaths
 
 # random 0-10 ticks
-PASSENGER_SPAWN_RANGE = 10
 CAR_CAPACITY = 4
-PASSENGER_WAITING_PATIENCE = 50
 PASSENGER_DETOUR_TOLERANCE = 1.5
 
 
@@ -123,7 +121,7 @@ def car_pooling_update(cache):
 
                 # Neighbouring filtering stage
                 cars_in_range = get_cars_in_patience_range(available_cars, passenger, cache["grid"],
-                                                           PASSENGER_WAITING_PATIENCE,
+                                                           passenger.waiting_patience,
                                                            cache["dynamic_paths_collection"])
                 if len(cars_in_range) <= 0:
                     continue
@@ -135,15 +133,8 @@ def car_pooling_update(cache):
                 # Schedule Computing Stage
                 possible_paths = PathsCollection()
 
-                threads = []
                 for car in cars_in_range:
-                    thread = threading.Thread(target=process_possible_paths_for_car,
-                                              args=(car, possible_paths, cache, passenger))
-                    threads.append(thread)
-                    thread.start()
-
-                for thread in threads:
-                    thread.join()
+                    process_possible_paths_for_car(car, possible_paths, cache, passenger)
 
                 if possible_paths.has_car_paths():
                     (car, best_path) = possible_paths.get_best_car_path()
@@ -173,6 +164,7 @@ def update(cache):
             passenger.traveled += 1
         else:
             passenger.waited_for_car += 1
+            passenger.waiting_patience += 1
 
     move_cars(cars, passengers, cache["served_passengers"])
     move_cars(taxi_cars, taxi_passengers, cache["served_taxi_passengers"])
@@ -183,7 +175,7 @@ def update(cache):
     # random passenger spawning
     current_next_passenger_spawn = cache["next_passenger_spawn"]
     if current_next_passenger_spawn == 0:
-        new_passenger = Passenger(cache["valid_positions"], cache["random"])
+        new_passenger = Passenger(cache["valid_positions"], cache["random"], cache["passenger_waiting_patience"])
         new_taxi_passenger = copy.deepcopy(new_passenger)
         cache["passengers"][new_passenger.id] = new_passenger
         cache["taxi_passengers"][new_passenger.id] = new_taxi_passenger
@@ -195,7 +187,8 @@ def update(cache):
     if cache["enable_hotspots"]:
         if cache["ticks"] == cache["update_num_loc_hotspot"]:
             for i in range(cache["pass_num_loc_hotspot"]):
-                new_passenger = Passenger(cache["valid_positions"], cache["random"], cache["hotspot_loc_x"],
+                new_passenger = Passenger(cache["valid_positions"], cache["random"],
+                                          cache["passenger_waiting_patience"], cache["hotspot_loc_x"],
                                           cache["hotspot_loc_y"])
                 new_taxi_passenger = copy.deepcopy(new_passenger)
                 cache["passengers"][new_passenger.id] = new_passenger
@@ -204,7 +197,8 @@ def update(cache):
         # passenger spawning for hotspots in which all passengers go to the same location
         if cache["ticks"] == cache["update_num_dest_hotspot"]:
             for i in range(cache["pass_num_loc_hotspot"]):
-                new_passenger = Passenger(cache["valid_positions"], cache["random"], dest_x=cache["hotspot_loc_x"],
+                new_passenger = Passenger(cache["valid_positions"], cache["random"],
+                                          cache["passenger_waiting_patience"], dest_x=cache["hotspot_loc_x"],
                                           dest_y=cache["hotspot_loc_y"])
                 new_taxi_passenger = copy.deepcopy(new_passenger)
                 cache["passengers"][new_passenger.id] = new_passenger
@@ -224,15 +218,8 @@ def process_possible_paths_for_car(car, possible_paths, cache, passenger):
     passengers_combinations = combinations(car_passengers)
 
     # Time Limit filtering stage
-    threads = []
     for combination in passengers_combinations:
-        thread = threading.Thread(target=process_combination,
-                                  args=(car, combination, cache, car_passengers, passenger, valid_car_paths,))
-        threads.append(thread)
-        thread.start()
-
-    for thread in threads:
-        thread.join()
+        process_combination(car, combination, cache, car_passengers, passenger, valid_car_paths)
 
     if valid_car_paths.has_paths():
         possible_paths.add_car_paths(valid_car_paths)
@@ -254,7 +241,7 @@ def process_combination(car, combination, cache, car_passengers, passenger, vali
         path.extend(section)
 
         if is_point_passenger_starting_location(car_passengers, passenger, point):
-            if distance > PASSENGER_WAITING_PATIENCE:
+            if distance > passenger.waiting_patience:
                 is_possible_path = False
                 break
 

@@ -8,7 +8,7 @@ const url = " http://localhost:105";
 // size of the map (width and height)
 const size = 500;
 // number of cells in a row
-const cellNum = 21;
+const cellNum = 41;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map

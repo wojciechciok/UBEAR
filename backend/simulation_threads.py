@@ -30,6 +30,7 @@ def init_single(content):
     max_updates = content["maxUpdates"]
     cache["maxTicks"] = max_updates if max_updates is not None else 1000
     cache["grid"] = grid
+    cache["passenger_waiting_patience"] = int(len(grid[0])/2)
     cache["valid_positions"] = get_valid_passenger_positions(grid)
     cache["cars"] = list(map(lambda car: Car(car["x"], car["y"], car["id"]), content["cars"]))
     cache["taxi_cars"] = copy.deepcopy(cache["cars"])
@@ -52,8 +53,8 @@ def init_single(content):
         cache["update_num_dest_hotspot"] = content["updateNumDestHotspot"]
         cache["enable_hotspots"] = content["enableHotspots"]
         if cache["enable_hotspots"]:
-            cache["hotspot_Loc_y"] = content["yHotspotLoc"]
-            cache["hotspot_Loc_x"] = content["xHotspotLoc"]
+            cache["hotspot_loc_y"] = content["yHotspotLoc"]
+            cache["hotspot_loc_x"] = content["xHotspotLoc"]
 
     return cache
 
