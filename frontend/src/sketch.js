@@ -224,7 +224,16 @@ let simulation1 = function (p) {
     }
     let maxY = Math.max(
       metrics.taxi_cars.sum_travelled,
-      metrics.taxi_passengers.sum_travelled
+      metrics.taxi_passengers.sum_travelled,
+      metrics.cars.sum_travelled,
+      metrics.passengers.sum_travelled
+    );
+    // update chart
+    addData(
+      taxiChart,
+      "",
+      [metrics.taxi_cars.sum_travelled, metrics.taxi_passengers.sum_travelled],
+      maxY
     );
 
     addData(
