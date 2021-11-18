@@ -224,20 +224,20 @@ let simulation1 = function (p) {
     ]);
 
     addData(passengersWaitingStatsChart, "", [
-      metrics.passengers.mean_waited_for_car,
-      metrics.taxi_passengers.mean_waited_for_car,
+      metrics.passengers.common_sum_waited_for_car,
+      metrics.taxi_passengers.common_sum_waited_for_car,
     ]);
 
     addData(passengersTravelTimeChart, "", [
-      metrics.passengers.mean_travelled,
-      metrics.taxi_passengers.mean_travelled,
+      metrics.passengers.common_sum_travelled,
+      metrics.taxi_passengers.common_sum_travelled,
     ]);
 
     addData(passengersTimeSavedChart, "", [
-      metrics.taxi_passengers.mean_waited_for_car +
-        metrics.taxi_passengers.mean_travelled -
-        (metrics.passengers.mean_waited_for_car +
-          metrics.passengers.mean_travelled),
+      metrics.taxi_passengers.common_sum_waited_for_car +
+        metrics.taxi_passengers.common_sum_travelled -
+        (metrics.passengers.common_sum_waited_for_car +
+          metrics.passengers.common_sum_travelled),
     ]);
   }
 

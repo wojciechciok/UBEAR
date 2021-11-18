@@ -39,12 +39,12 @@ const passengersServedChart = createChart("passengersServedChart", [
 
 const passengersWaitingStatsChart = createChart("passengersWaitingStatsChart", [
   {
-    label: "Average waiting time for UBEAR passengers",
+    label: "Total waiting time for served UBEAR passengers",
     borderColor: "rgb(75, 192, 192)",
     tension: 0.1,
   },
   {
-    label: "Average waiting time for taxi passengers",
+    label: "Total waiting time for served taxi passengers",
     borderColor: "rgb(182, 101, 122)",
     tension: 0.1,
   },
@@ -52,12 +52,12 @@ const passengersWaitingStatsChart = createChart("passengersWaitingStatsChart", [
 
 const passengersTravelTimeChart = createChart("passengersTravelTimeChart", [
   {
-    label: "Average travel time for UBEAR passengers",
+    label: "Total travel time for served UBEAR passengers",
     borderColor: "rgb(75, 192, 192)",
     tension: 0.1,
   },
   {
-    label: "Average travel time for taxi passengers",
+    label: "Total travel time for served taxi passengers",
     borderColor: "rgb(182, 101, 122)",
     tension: 0.1,
   },
@@ -65,7 +65,7 @@ const passengersTravelTimeChart = createChart("passengersTravelTimeChart", [
 
 const passengersTimeSavedChart = createChart("passengersTimeSavedChart", [
   {
-    label: "Average difference in trip time between models",
+    label: "Total difference in trip time between models",
     borderColor: "rgb(75, 192, 192)",
     tension: 0.1,
   },
