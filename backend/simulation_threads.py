@@ -7,12 +7,13 @@ from map_helpers import update
 import json
 import copy
 
+
 def thread_creator(amount, content):
     threads = []
     results = []
     for i in range(amount):
         cache = init_single(content)
-        t = Thread(target=simulate_single, args=(cache,results))
+        t = Thread(target=simulate_single, args=(cache, results))
         threads.append(t)
         t.start()
         print(f'Started, guid: {cache["guid"]}')
@@ -44,8 +45,18 @@ def init_single(content):
     cache["min_pass_spawn"] = content["minPassSpawn"]
     cache["max_pass_spawn"] = content["maxPassSpawn"]
     cache["dynamic_paths_collection"] = {}
+    cache["enable_hotspots"] = False
+    if content["enableHotspots"] and "xHotspotLoc" in content.keys() and "yHotspotLoc" in content.keys():
+        cache["update_num_loc_hotspot"] = content["updateNumLocHotspot"]
+        cache["pass_num_loc_hotspot"] = content["hotspotPassNumber"]
+        cache["update_num_dest_hotspot"] = content["updateNumDestHotspot"]
+        cache["enable_hotspots"] = content["enableHotspots"]
+        if cache["enable_hotspots"]:
+            cache["hotspot_Loc_y"] = content["yHotspotLoc"]
+            cache["hotspot_Loc_x"] = content["xHotspotLoc"]
 
     return cache
+
 
 def simulate_single(cache, results):
     guid = cache["guid"]
