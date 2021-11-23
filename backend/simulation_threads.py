@@ -4,6 +4,8 @@ from passenger import get_valid_passenger_positions
 from car import Car
 from uuid import uuid4
 from map_helpers import update
+from metrics import get_all_metrics
+from savemetrics import save_metrics
 import json
 import copy
 
@@ -65,9 +67,29 @@ def simulate_single(cache, results):
     while not has_finished:
         has_finished = update(cache)
         if has_finished:
+            metrics_dict = get_all_metrics(cache)
+            metrics_dict["passengers"]["served_passengers_count"] = metrics_dict["served_passengers_count"]
+            metrics_dict["taxi_passengers"]["served_taxi_passengers_count"] = metrics_dict["served_taxi_passengers_count"]
+            metricsjson = {
+                    "UBEAR metrics" : {
+                        "UBEAR car metrics" : metrics_dict["cars"],
+                        "UBEAR passenger metrics" : metrics_dict["passengers"]
+                                
+                    },
+                    
+                    "Normal taxi metrics" : {
+                        "Normal taxi car metrics" :metrics_dict["taxi_cars"],
+                        "Normal taxi passenger metrics" : metrics_dict["taxi_passengers"]
+                    }
+                }
+            
+            # Print to file
+            name_of_save_file = f"size{str(len(cache['grid']))}cars{str(len(cache['cars']))}maxupdates{str(cache['maxTicks'])}"
+            save_metrics(json.dumps(metricsjson, sort_keys=True, indent=4), f"../simulationmetrics/{name_of_save_file}.json")
             print(f'Finished, guid: {guid}')
             results.append({
                 'guid': guid,
                 'finished': True,
                 # metrics should be returned by the update function along the has_finished
-                'metrics': {}})
+                'metrics': metricsjson
+            })
