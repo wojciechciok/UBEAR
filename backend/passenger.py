@@ -2,9 +2,16 @@ import uuid
 
 
 class Passenger:
-    def __init__(self, valid_positions, random):
-        (x, y) = get_valid_passenger_position(valid_positions, random)
-        (x_dest, y_dest) = get_valid_passenger_position(valid_positions, random)
+    def __init__(self, valid_positions, random, waiting_patience, x=None, y=None, dest_x=None, dest_y=None):
+        if x is not None and y is not None:
+            (x, y) = (x, y)
+            (x_dest, y_dest) = get_valid_passenger_position(valid_positions, random)
+        elif dest_x is not None and dest_y is not None:
+            (x, y) = get_valid_passenger_position(valid_positions, random)
+            (x_dest, y_dest) = (dest_x, dest_y)
+        else:
+            (x, y) = get_valid_passenger_position(valid_positions, random)
+            (x_dest, y_dest) = get_valid_passenger_position(valid_positions, random)
         self.x = x
         self.y = y
         self.x_dest = x_dest
@@ -19,6 +26,8 @@ class Passenger:
         self.trip_cost = 0
         self.cost_score = 0
         self.time_score = 0
+        self.waiting_patience = waiting_patience
+
 
 def get_valid_passenger_position(valid_positions, random):
     return random.choice(valid_positions)

@@ -8,7 +8,7 @@ const url = " http://localhost:105";
 // size of the map (width and height)
 const size = 500;
 // number of cells in a row
-const cellNum = 21;
+const cellNum = 41;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
@@ -63,6 +63,15 @@ let radioBtn;
 // updates counter
 let updatesCounterElement;
 let updatesCounter = 0;
+//hotspots inputs
+let hotspotsCheckbox;
+let hotspotDestUpdateNumber;
+let hotspotLocUpdateNumber;
+let hotspotPassNumber;
+let positionRadBtn;
+let hotspotPositionX;
+let hotspotPositionY;
+let hotspotCoordinates;
 
 ////////////////////////
 // UBEAR MODEL CANVAS //
@@ -116,7 +125,31 @@ let simulation1 = function (p) {
 
     // select updates counter
     updatesCounterElement = p.select("#updatesCounter");
+
+    //hotspots inputs
+
+    hotspotsCheckbox = p.select("#hotspotsCheckbox");
+    hotspotDestUpdateNumber = p.select("#hotspotDestUpdateNumber");
+    hotspotLocUpdateNumber = p.select("#hotspotLocUpdateNumber");
+    hotspotPassNumber = p.select("#hotspotPassNumber");
+
+    let hotspotRadioWrapper = p.select("#mapHotspotPositionRadBtn");
+    positionRadBtn = p.createRadio();
+    positionRadBtn.parent(hotspotRadioWrapper);
+    positionRadBtn.addClass("form-check");
+    positionRadBtn.addClass("radio");
+    positionRadBtn.option("Determine hotspot position");
+    document.getElementById("hotspotCoordinates").innerHTML =
+      "Hotspot position:";
   };
+
+
+  function showHotspot(p){
+    let hc = p.color(255, 0, 0, 70);
+    p.noStroke();
+    p.fill(hc)
+    p.square(hotspotPositionX * cellSize, hotspotPositionY * cellSize, cellSize);
+  }
 
   function update(data) {
     updatesCounter++;
@@ -198,6 +231,10 @@ let simulation1 = function (p) {
       passengers[passengerID].show(p);
     }
 
+    if (hotspotsCheckbox.checked()){
+      showHotspot(p);
+    }
+
     // update chart
     addData(taxiChart, "", [
       metrics.taxi_cars.sum_travelled,
@@ -221,6 +258,27 @@ let simulation1 = function (p) {
       return;
     let x = Math.floor(p.mouseX / cellSize);
     let y = Math.floor(p.mouseY / cellSize);
+    let h = positionRadBtn.value();
+    switch (h) {
+      case "Determine hotspot position":
+        if (map.grid[x][y] == 1) {
+          hotspotPositionX = x;
+          hotspotPositionY = y;
+          map.show(p);
+          for (let carID of carsIDs) {
+            cars[carID].show(p);
+          }
+          showHotspot(p);
+          document.getElementById("hotspotCoordinates").innerHTML =
+            "Hotspot position: (" +
+            hotspotPositionX +
+            ", " +
+            hotspotPositionY +
+            ")";
+        } else {
+          alert("Please select a road point in the map");
+        }
+    }
     let v = radioBtn.value();
     switch (v) {
       case "Road construction":
@@ -316,6 +374,12 @@ let simulation1 = function (p) {
         no_visualization: noVisualizationCheckBox.checked(),
         minPassSpawn: p.int(inputPassSpawnMin.value()),
         maxPassSpawn: p.int(inputPassSpawnMax.value()),
+        enableHotspots: hotspotsCheckbox.checked(),
+        updateNumDestHotspot: p.int(hotspotDestUpdateNumber.value()),
+        updateNumLocHotspot: p.int(hotspotLocUpdateNumber.value()),
+        hotspotPassNumber: p.int(hotspotPassNumber.value()),
+        xHotspotLoc: hotspotPositionX,
+        yHotspotLoc: hotspotPositionY,
       },
       function (result) {
         if (!noVisualizationCheckBox.checked()) {
