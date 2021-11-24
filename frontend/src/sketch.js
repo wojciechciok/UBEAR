@@ -99,6 +99,7 @@ let simulation1 = function (p) {
 
   // setup - this function is called once at the beginning of the program
   p.setup = () => {
+    document.getElementById('loadConfigName').addEventListener('change', onChange);
     p.createCanvas(size, size);
 
     inputMaxUpdates = p.select("#maxUpdatesInput");
@@ -131,9 +132,6 @@ let simulation1 = function (p) {
 
     button3 = p.select("#refreshMapSize");
     button3.mousePressed(refreshMapSize);
-
-    buttonLoad = p.select("#loadConfigButton");
-    buttonLoad.mousePressed(onLoadConfigButtonPressed);
 
     // Create Radio Buttons
     let radioWrapper = p.select("#mapModeRadioButton");
@@ -427,28 +425,39 @@ let simulation1 = function (p) {
     taxiMap.show(p);
   }
 
-  function onLoadConfigButtonPressed() {
-    function loadConfig(data) {
-      inputMapSize.value(data.mapSize);
-      cellSize = size / cellNum;
-      refreshMapSize();
-      for (let carObj of Object.values(data.cars)) {
-        const car = new Car(p, carObj.id, carObj.x, carObj.y);
-        const taxiCar = new Car(p, carObj.id, carObj.x, carObj.y);
-        cars[car.id] = car;
-        taxiCars[taxiCar.id] = taxiCar;
-        car.show(p);
-        taxiCar.show(p);
-      }
-      carsIDs = data.carsIDs;
-      inputMaxUpdates.value(data.maxUpdates); // data.inputMaxUpdates
-      inputPassSpawnMax.value(data.maxPassSpawn);
-      inputPassSpawnMin.value(data.minPassSpawn);
-    }
 
-    var fileName = inputLoadConfig.value();
-    p.loadJSON("assets/" + fileName + ".json", loadConfig);
+  function onChange(event) {
+    let reader = new FileReader();
+    reader.onload = onReaderLoad;
+    reader.readAsText(event.target.files[0]);
   }
+
+
+  function onReaderLoad(event){
+      console.log(event.target.result);
+      let obj = JSON.parse(event.target.result);
+      loadConfig(obj);
+  }
+
+
+  function loadConfig(data){
+    inputMapSize.value(data.mapSize);
+    cellSize = size / cellNum;
+    refreshMapSize();
+    for (let carObj of Object.values(data.cars)){
+      const car = new Car(p, carObj.id, carObj.x, carObj.y);
+      const taxiCar = new Car(p, carObj.id, carObj.x, carObj.y);
+      cars[car.id] = car;
+      taxiCars[taxiCar.id] = taxiCar;
+      car.show(p);
+      taxiCar.show(p);
+    }
+    carsIDs = data.carsIDs;
+    inputMaxUpdates.value(data.maxUpdates); // data.inputMaxUpdates
+    inputPassSpawnMax.value(data.maxPassSpawn);
+    inputPassSpawnMin.value(data.minPassSpawn);
+  }
+
 
   function startSimulation() {
     updatesCounter = 0;
