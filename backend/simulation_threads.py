@@ -7,12 +7,13 @@ from map_helpers import update
 import json
 import copy
 
+
 def thread_creator(amount, content):
     threads = []
     results = []
     for i in range(amount):
         cache = init_single(content)
-        t = Thread(target=simulate_single, args=(cache,results))
+        t = Thread(target=simulate_single, args=(cache, results))
         threads.append(t)
         t.start()
         print(f'Started, guid: {cache["guid"]}')
@@ -28,7 +29,10 @@ def init_single(content):
     cache["ticks"] = 0
     max_updates = content["maxUpdates"]
     cache["maxTicks"] = max_updates if max_updates is not None else 1000
+    framerate = content["framerate"]
+    cache["framerate"] = framerate if framerate is not None else 60
     cache["grid"] = grid
+    cache["passenger_waiting_patience"] = int(len(grid[0])/2)
     cache["valid_positions"] = get_valid_passenger_positions(grid)
     cache["cars"] = list(map(lambda car: Car(car["x"], car["y"], car["id"]), content["cars"]))
     cache["taxi_cars"] = copy.deepcopy(cache["cars"])
@@ -44,8 +48,18 @@ def init_single(content):
     cache["min_pass_spawn"] = content["minPassSpawn"]
     cache["max_pass_spawn"] = content["maxPassSpawn"]
     cache["dynamic_paths_collection"] = {}
+    cache["enable_hotspots"] = False
+    if content["enableHotspots"] and "xHotspotLoc" in content.keys() and "yHotspotLoc" in content.keys():
+        cache["update_num_loc_hotspot"] = content["updateNumLocHotspot"]
+        cache["pass_num_loc_hotspot"] = content["hotspotPassNumber"]
+        cache["update_num_dest_hotspot"] = content["updateNumDestHotspot"]
+        cache["enable_hotspots"] = content["enableHotspots"]
+        if cache["enable_hotspots"]:
+            cache["hotspot_loc_y"] = content["yHotspotLoc"]
+            cache["hotspot_loc_x"] = content["xHotspotLoc"]
 
     return cache
+
 
 def simulate_single(cache, results):
     guid = cache["guid"]

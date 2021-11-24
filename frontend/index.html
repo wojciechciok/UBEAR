@@ -92,6 +92,17 @@
             />
           </div>
           <div class="form-group">
+            <label>Framerate</label>
+            <input
+              type="number"
+              class="form-control"
+              id="framerate"
+              value="60"
+              min="1"
+              step="1"
+            />
+          </div>
+          <div class="form-group">
             <label for="minPassengerSpawnIntervalInput"
               >Minimum value for passenger spawning interval</label
             >
@@ -145,7 +156,9 @@
           </div>
 
           <div id="mapModeRadioButton"></div>
-
+          <div id="mapHotspotPositionRadBtn"></div> 
+          <p id="hotspotCoordinates"></p>
+          
           <div class="form-group form-check">
             <input
               type="checkbox"
@@ -156,6 +169,52 @@
               >No visualisation</label
             >
           </div>
+
+          <div class="hotspots control">
+
+            <div class="form-group form-check">
+              <input
+                type="checkbox"
+                class="form-check-input"
+                id="hotspotsCheckbox"
+              />
+              <label class="form-check-label" for="hotspotsCheckbox"
+                >Enable hotspots</label
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="hotspotDestUpdateNumber">Update number for creating a hotspot destination</label>
+              <input
+                type="number"
+                class="form-control"
+                id="hotspotDestUpdateNumber"
+                value="10"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="hotspotLocUpdateNumber">Update number for the hotspot come back</label>
+              <input
+                type="number"
+                class="form-control"
+                id="hotspotLocUpdateNumber"
+                value="30"
+              />
+            </div>
+
+            <div class="form-group">
+              <label for="hotspotPassNumber">Number of passengers for the hotspot</label>
+              <input
+                type="number"
+                class="form-control"
+                id="hotspotPassNumber"
+                value="10"
+              />
+            </div>
+
+          </div>
+
           <button type="button" class="btn btn-light" id="startButton">
             Start Simulation
           </button>
