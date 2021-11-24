@@ -8,7 +8,7 @@ const url = " http://localhost:105";
 // size of the map (width and height)
 let size = 500;
 // number of cells in a row
-const cellNum = 31;
+let cellNum = 31;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
@@ -112,6 +112,8 @@ let simulation1 = function (p) {
     inputPassSpawnMax = p.select("#maxPassengerSpawnIntervalInput");
 
     inputMapSize = p.select("#mapSize");
+    cellNum = inputMapSize.value();
+    cellSize = size / cellNum;
 
     inputLoadConfig = p.select("#loadConfigName");
     // initialize map

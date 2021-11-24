@@ -32,6 +32,11 @@
         padding-top: 0;
         margin-top: 0;
       }
+
+      button,
+      input[type="button"] {
+        margin-bottom: 10px !important;
+      }
     </style>
     <link
       rel="stylesheet"
@@ -83,6 +88,18 @@
             <h1 class="ubear-color-100">UBEAR</h1>
           </div>
           <div class="form-group">
+            <label for="loadConfigName">Load Config</label>
+            <input
+              type="text"
+              class="form-control"
+              id="loadConfigName"
+              value=""
+            />
+          </div>
+          <button type="button" class="btn btn-light" id="loadConfigButton">
+            Load Configuration
+          </button>
+          <div class="form-group">
             <label for="maxUpdatesInput">Max updates</label>
             <input
               type="number"
@@ -102,6 +119,13 @@
               step="1"
             />
           </div>
+          <div class="form-group">
+            <label for="mapSize">Map Size</label>
+            <input type="number" class="form-control" id="mapSize" value="31" />
+          </div>
+          <button type="button" class="btn btn-light" id="refreshMapSize">
+            Refresh Map Size
+          </button>
           <div class="form-group">
             <label for="minPassengerSpawnIntervalInput"
               >Minimum value for passenger spawning interval</label
@@ -131,27 +155,6 @@
               class="form-control"
               id="randomTaxiSpawnInput"
               value="4"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="mapSize">Map Size</label>
-            <input
-              type="number"
-              class="form-control"
-              id="mapSize"
-              value="41"
-            />
-          </div>
-          
-
-          <div class="form-group">
-            <label for="loadConfigName">Load Config</label>
-            <input
-              type="text"
-              class="form-control"
-              id="loadConfigName"
-              value=""
             />
           </div>
 
@@ -218,23 +221,11 @@
               />
             </div>
           </div>
-
-          <button type="button" class="btn btn-light" id="startButton">
-            Start Simulation
-          </button>
-          
           <button type="button" class="btn btn-light" id="saveConfigButton">
             Save Configuration
           </button>
-
-          <button type="button" class="btn btn-light" id="loadConfigButton">
-            Load Configuration!
-          </button>
-
-
-          
-          <button type="button" class="btn btn-light" id="refreshMapSize">
-            Refresh Map Size
+          <button type="button" class="btn btn-light" id="startButton">
+            Start Simulation
           </button>
         </div>
         <div class="col text-center">
