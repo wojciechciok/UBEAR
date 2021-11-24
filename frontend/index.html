@@ -92,6 +92,17 @@
             />
           </div>
           <div class="form-group">
+            <label>Framerate</label>
+            <input
+              type="number"
+              class="form-control"
+              id="framerate"
+              value="60"
+              min="1"
+              step="1"
+            />
+          </div>
+          <div class="form-group">
             <label for="minPassengerSpawnIntervalInput"
               >Minimum value for passenger spawning interval</label
             >
@@ -120,6 +131,27 @@
               class="form-control"
               id="randomTaxiSpawnInput"
               value="4"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="mapSize">Map Size</label>
+            <input
+              type="number"
+              class="form-control"
+              id="mapSize"
+              value="41"
+            />
+          </div>
+          
+
+          <div class="form-group">
+            <label for="loadConfigName">Load Config</label>
+            <input
+              type="text"
+              class="form-control"
+              id="loadConfigName"
+              value=""
             />
           </div>
 
@@ -189,6 +221,20 @@
 
           <button type="button" class="btn btn-light" id="startButton">
             Start Simulation
+          </button>
+          
+          <button type="button" class="btn btn-light" id="saveConfigButton">
+            Save Configuration
+          </button>
+
+          <button type="button" class="btn btn-light" id="loadConfigButton">
+            Load Configuration!
+          </button>
+
+
+          
+          <button type="button" class="btn btn-light" id="refreshMapSize">
+            Refresh Map Size
           </button>
         </div>
         <div class="col text-center">
