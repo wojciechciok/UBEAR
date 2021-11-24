@@ -29,6 +29,8 @@ def init_single(content):
     cache["ticks"] = 0
     max_updates = content["maxUpdates"]
     cache["maxTicks"] = max_updates if max_updates is not None else 1000
+    framerate = content["framerate"]
+    cache["framerate"] = framerate if framerate is not None else 60
     cache["grid"] = grid
     cache["passenger_waiting_patience"] = int(len(grid[0])/2)
     cache["valid_positions"] = get_valid_passenger_positions(grid)

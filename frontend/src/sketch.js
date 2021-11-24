@@ -50,6 +50,8 @@ let simulationStarted = false;
 let taxiSpawnerInp;
 // maximum number of updates
 let inputMaxUpdates;
+// framerate
+let inputFramerate;
 // Passanger spawn minimum
 let inputPassSpawnMin;
 // Passanger spawn maximum
@@ -91,6 +93,8 @@ let simulation1 = function (p) {
     p.createCanvas(size, size);
 
     inputMaxUpdates = p.select("#maxUpdatesInput");
+
+    inputFramerate = p.select("#framerate");
 
     // Minimum interval time for passanger spawning
     inputPassSpawnMin = p.select("#minPassengerSpawnIntervalInput");
@@ -354,6 +358,7 @@ let simulation1 = function (p) {
           return { x: c.x, y: c.y, id: c.id };
         }),
         maxUpdates: p.int(inputMaxUpdates.value()),
+        framerate: p.int(inputFramerate.value()),
         no_visualization: noVisualizationCheckBox.checked(),
         minPassSpawn: p.int(inputPassSpawnMin.value()),
         maxPassSpawn: p.int(inputPassSpawnMax.value()),
