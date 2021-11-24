@@ -14,7 +14,7 @@ def thread_creator(amount, content):
     threads = []
     results = []
     for i in range(amount):
-        cache = init_single(content)
+        cache = init_single(content, True)
         t = Thread(target=simulate_single, args=(cache, results))
         threads.append(t)
         t.start()
@@ -25,7 +25,7 @@ def thread_creator(amount, content):
     print(json.dumps(results))
 
 
-def init_single(content):
+def init_single(content, no_seed = False):
     grid = content["grid"]
     cache = {}
     cache["ticks"] = 0
@@ -42,7 +42,8 @@ def init_single(content):
     cache["taxi_passengers"] = {}
     cache["next_passenger_spawn"] = 0
     random = Random()
-    random.seed(42)
+    if not no_seed:
+        random.seed(42)
     cache["random"] = random
     cache["guid"] = str(uuid4())
     cache["min_pass_spawn"] = content["minPassSpawn"]
