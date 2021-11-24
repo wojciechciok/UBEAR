@@ -62,10 +62,9 @@ def get_cars_positions(guid):
         return f"Simulation with guid: {guid} doesn't exist"
     if not 'grid' in cache or 'cars' not in cache:
         return f"Simulation with guid: {guid} Not initialized"
-    refresh_time = FRAME_RATE
 
+    refresh_time = 1 / cache['framerate']
     def events():
-        has_finished = False
         ticks = 0
         while True:
             time.sleep(refresh_time)
