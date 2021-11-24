@@ -8,6 +8,7 @@ from metrics import get_all_metrics
 from savemetrics import save_metrics
 import json
 import copy
+import os
 
 
 def thread_creator(amount, content):
@@ -22,7 +23,6 @@ def thread_creator(amount, content):
     # main thread waits for all threads
     for t in threads:
         t.join()
-    print(json.dumps(results))
 
 
 def init_single(content):
@@ -68,33 +68,20 @@ def simulate_single(cache, results):
         has_finished = update(cache)
         if has_finished:
             metrics_dict = get_all_metrics(cache)
-            metrics_dict["passengers"]["served_passengers_count"] = metrics_dict["served_passengers_count"]
-            metrics_dict["taxi_passengers"]["served_taxi_passengers_count"] = metrics_dict[
-                "served_taxi_passengers_count"]
-            metricsjson = {
-                "UBEAR metrics": {
-                    "UBEAR car metrics": metrics_dict["cars"],
-                    "UBEAR passenger metrics": metrics_dict["passengers"]
-
-                },
-
-                "Normal taxi metrics": {
-                    "Normal taxi car metrics": metrics_dict["taxi_cars"],
-                    "Normal taxi passenger metrics": metrics_dict["taxi_passengers"]
-                }
-            }
-
             # Print to file
-            name_of_save_file = f"size{str(len(cache['grid']))}cars{str(len(cache['cars']))}maxupdates{str(cache['maxTicks'])}"
+            name_of_save_file = f"size{str(len(cache['grid']))}cars{str(len(cache['cars']))}maxupdates{str(cache['maxTicks'])}_{guid}"
             try:
-                save_metrics(json.dumps(metricsjson, sort_keys=True, indent=4),
-                             f"./simulationmetrics/{name_of_save_file}.json")
+                dir_name = 'simulationmetrics'
+                if not os.path.exists(dir_name):
+                    os.makedirs(dir_name)
+                save_metrics(json.dumps(metrics_dict, sort_keys=True, indent=4),
+                             f"./{dir_name}/{name_of_save_file}.json")
                 print(f'Finished, guid: {guid}')
                 results.append({
                     'guid': guid,
                     'finished': True,
                     # metrics should be returned by the update function along the has_finished
-                    'metrics': metricsjson
+                    'metrics': metrics_dict
                 })
             except FileNotFoundError:
                 print('Remember to create backend/simulationmetrics directory in the project :)')
