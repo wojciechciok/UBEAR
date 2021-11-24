@@ -252,6 +252,9 @@ let simulation1 = function (p) {
         if (map.grid[x][y] == 1) {
           hotspotPositionX = x;
           hotspotPositionY = y;
+          let hc = p.color(255, 0, 0, 50);
+          p.fill(hc)
+          p.square(hotspotPositionX * cellSize, hotspotPositionY * cellSize, cellSize)
           document.getElementById("hotspotCoordinates").innerHTML =
             "Hotspot position: (" +
             hotspotPositionX +

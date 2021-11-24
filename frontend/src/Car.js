@@ -40,6 +40,10 @@ class Car {
       p.fill(this.color);
       p.square(pos[0] * cellSize, pos[1] * cellSize, cellSize);
     }
+    //paint hotspot cell
+    let hc = p.color(255, 0, 0, 50);
+    p.fill(hc)
+    p.square(hotspotPositionX * cellSize, hotspotPositionY * cellSize, cellSize)
   }
   update(x, y, path, passengersList) {
     this.x = x;
