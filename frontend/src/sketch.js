@@ -83,9 +83,6 @@ let hotspotCoordinates;
 
 let button2;
 let button3;
-let button4;
-
-
 
 ////////////////////////
 // UBEAR MODEL CANVAS //
@@ -133,9 +130,6 @@ let simulation1 = function (p) {
     button3 = p.select("#refreshMapSize");
     button3.mousePressed(refreshMapSize);
     
-    //button4 = p.select("#loadConfigButton");
-    //button4.mousePressed(loadConfig);
-
     buttonLoad = p.select("#loadConfigButton")
     buttonLoad.mousePressed(onLoadConfigButtonPressed);
 
