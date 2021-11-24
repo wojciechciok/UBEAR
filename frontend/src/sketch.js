@@ -8,7 +8,7 @@ const url = " http://localhost:105";
 // size of the map (width and height)
 const size = 500;
 // number of cells in a row
-const cellNum = 41;
+const cellNum = 31;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
@@ -264,21 +264,26 @@ let simulation1 = function (p) {
       metrics.served_taxi_passengers_count,
     ]);
 
-    addData(passengersWaitingStatsChart, "", [
-      metrics.passengers.common_sum_waited_for_car,
-      metrics.taxi_passengers.common_sum_waited_for_car,
-    ]);
-
-    addData(passengersTravelTimeChart, "", [
-      metrics.passengers.common_sum_travelled,
-      metrics.taxi_passengers.common_sum_travelled,
-    ]);
-
     addData(passengersTimeSavedChart, "", [
       metrics.taxi_passengers.common_sum_waited_for_car +
         metrics.taxi_passengers.common_sum_travelled -
         (metrics.passengers.common_sum_waited_for_car +
           metrics.passengers.common_sum_travelled),
+    ]);
+
+    resetChart(satisfactionChart);
+    addData(satisfactionChart, "TIME", [
+      metrics.passengers.time_satisfaction,
+      metrics.taxi_passengers.time_satisfaction,
+    ]);
+    addData(satisfactionChart, "COST", [
+      metrics.passengers.cost_satisfaction,
+      metrics.taxi_passengers.time_satisfaction,
+    ]);
+
+    addData(profitChart, "", [
+      metrics.passengers.profit - metrics.cars.cost,
+      metrics.taxi_passengers.profit - metrics.taxi_cars.cost,
     ]);
   }
 
@@ -366,9 +371,8 @@ let simulation1 = function (p) {
     resetChart(taxiChart);
     resetChart(chart);
     resetChart(passengersServedChart);
-    resetChart(passengersWaitingStatsChart);
-    resetChart(passengersTravelTimeChart);
     resetChart(passengersTimeSavedChart);
+    resetChart(profitChart);
 
     for (let x = 0; x < map.grid.length; x++) {
       for (let y = 0; y < map.grid[x].length; y++) {

@@ -18,7 +18,12 @@ def get_metrics_for_passengers(passengers, served, common):
         # "median_waited_for_car": median(map(lambda passenger: passenger.waited_for_car, passengers)),
         # "median_travelled": median(map(lambda passenger: passenger.traveled, passengers)),
         "mean_waited_for_car": mean(map(lambda passenger: passenger.waited_for_car, passengers)),
-        "mean_travelled": mean(map(lambda passenger: passenger.traveled, passengers))
+        "mean_travelled": mean(map(lambda passenger: passenger.traveled, passengers)),
+        "time_satisfaction": mean(map(lambda passenger: passenger.time_score, served)) if len(
+            served) > 0 else 0,
+        "cost_satisfaction": mean(map(lambda passenger: passenger.cost_score, served)) if len(
+            served) > 0 else 0,
+        "profit": sum(map(lambda passenger: passenger.trip_cost, served))
     }
 
 
@@ -36,7 +41,8 @@ def get_metrics_for_cars(cars):
         # "median_waited_for_passengers": median(map(lambda car: car.waited_for_passengers, cars)),
         # "median_travelled": median(map(lambda car: car.traveled, cars)),
         "mean_waited_for_passengers": mean(map(lambda car: car.waited_for_passengers, cars)),
-        "mean_travelled": mean(map(lambda car: car.traveled, cars))
+        "mean_travelled": mean(map(lambda car: car.traveled, cars)),
+        "cost": sum(map(lambda car: car.operation_cost, cars))
     }
 
 
@@ -52,7 +58,8 @@ def get_all_metrics(cache):
     common_served_taxi_passengers = list(filter(lambda p: p.id in common_passengers_ids, served_taxi_passengers))
     return {
         "passengers": get_metrics_for_passengers(passengers, served_passengers, common_served_passengers),
-        "taxi_passengers": get_metrics_for_passengers(taxi_passengers, served_taxi_passengers, common_served_taxi_passengers),
+        "taxi_passengers": get_metrics_for_passengers(taxi_passengers, served_taxi_passengers,
+                                                      common_served_taxi_passengers),
         "cars": get_metrics_for_cars(cache["cars"]),
         "taxi_cars": get_metrics_for_cars(cache["taxi_cars"]),
         "served_passengers_count": len(served_passengers),

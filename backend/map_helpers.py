@@ -98,7 +98,7 @@ def move_cars(cars, passengers, served_passengers, is_ubear=True):
                         passenger.time_score = passenger.shortest_path_length / (
                                     passenger.traveled + passenger.waited_for_car)
                     else:
-                        passenger.time_score = passenger.traveled / passenger.traveled + passenger.waited_for_car
+                        passenger.time_score = passenger.traveled / (passenger.traveled + passenger.waited_for_car)
                     served_passengers.append(passengers.pop(passenger.id, None))
 
         car.move(COMPANY_COST_PER_KM)

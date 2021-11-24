@@ -88,7 +88,7 @@
               type="number"
               class="form-control"
               id="maxUpdatesInput"
-              value="50"
+              value="500"
             />
           </div>
           <div class="form-group">
@@ -99,7 +99,7 @@
               type="number"
               class="form-control"
               id="minPassengerSpawnIntervalInput"
-              value="1"
+              value="8"
             />
           </div>
           <div class="form-group">
@@ -119,14 +119,14 @@
               type="number"
               class="form-control"
               id="randomTaxiSpawnInput"
-              value="0"
+              value="4"
             />
           </div>
 
           <div id="mapModeRadioButton"></div>
-          <div id="mapHotspotPositionRadBtn"></div> 
+          <div id="mapHotspotPositionRadBtn"></div>
           <p id="hotspotCoordinates"></p>
-          
+
           <div class="form-group form-check">
             <input
               type="checkbox"
@@ -139,7 +139,6 @@
           </div>
 
           <div class="hotspots control">
-
             <div class="form-group form-check">
               <input
                 type="checkbox"
@@ -152,7 +151,9 @@
             </div>
 
             <div class="form-group">
-              <label for="hotspotDestUpdateNumber">Update number for creating a hotspot destination</label>
+              <label for="hotspotDestUpdateNumber"
+                >Update number for creating a hotspot destination</label
+              >
               <input
                 type="number"
                 class="form-control"
@@ -162,7 +163,9 @@
             </div>
 
             <div class="form-group">
-              <label for="hotspotLocUpdateNumber">Update number for the hotspot come back</label>
+              <label for="hotspotLocUpdateNumber"
+                >Update number for the hotspot come back</label
+              >
               <input
                 type="number"
                 class="form-control"
@@ -172,7 +175,9 @@
             </div>
 
             <div class="form-group">
-              <label for="hotspotPassNumber">Number of passengers for the hotspot</label>
+              <label for="hotspotPassNumber"
+                >Number of passengers for the hotspot</label
+              >
               <input
                 type="number"
                 class="form-control"
@@ -180,7 +185,6 @@
                 value="10"
               />
             </div>
-
           </div>
 
           <button type="button" class="btn btn-light" id="startButton">
@@ -201,6 +205,30 @@
           </div>
           <hr />
           <h1>Metrics</h1>
+          <div class="row">
+            <div class="col">
+              <h3>Satisfaction score for passengers</h3>
+            </div>
+            <div class="col">
+              <h3>Profit as difference between operation cost and income</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="block mx-auto">
+                <canvas
+                  id="satisfactionChart"
+                  width="500"
+                  height="500"
+                ></canvas>
+              </div>
+            </div>
+            <div class="col">
+              <div class="block mx-auto">
+                <canvas id="profitChart" width="500" height="500"></canvas>
+              </div>
+            </div>
+          </div>
           <div class="row">
             <div class="col">
               <h3>Distances travelled by UBEAR vehicles and passengers</h3>
@@ -224,6 +252,13 @@
           <div class="row">
             <div class="col">
               <h3>Numbers of served passengers by a service</h3>
+            </div>
+            <div class="col">
+              <h3>Total time saved by UBEAR passengers</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
               <div class="block mx-auto">
                 <canvas
                   id="passengersServedChart"
@@ -233,29 +268,6 @@
               </div>
             </div>
             <div class="col">
-              <h3>Total waiting time for a ride</h3>
-              <div class="block mx-auto">
-                <canvas
-                  id="passengersWaitingStatsChart"
-                  width="500"
-                  height="500"
-                ></canvas>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <h3>Total travel time to destination</h3>
-              <div class="block mx-auto">
-                <canvas
-                  id="passengersTravelTimeChart"
-                  width="500"
-                  height="500"
-                ></canvas>
-              </div>
-            </div>
-            <div class="col">
-              <h3>Total time saved by UBEAR passengers</h3>
               <div class="block mx-auto">
                 <canvas
                   id="passengersTimeSavedChart"

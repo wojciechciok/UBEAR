@@ -37,36 +37,36 @@ const passengersServedChart = createChart("passengersServedChart", [
   },
 ]);
 
-const passengersWaitingStatsChart = createChart("passengersWaitingStatsChart", [
-  {
-    label: "Total waiting time for served UBEAR passengers",
-    borderColor: "rgb(75, 192, 192)",
-    tension: 0.1,
-  },
-  {
-    label: "Total waiting time for served taxi passengers",
-    borderColor: "rgb(182, 101, 122)",
-    tension: 0.1,
-  },
-]);
-
-const passengersTravelTimeChart = createChart("passengersTravelTimeChart", [
-  {
-    label: "Total travel time for served UBEAR passengers",
-    borderColor: "rgb(75, 192, 192)",
-    tension: 0.1,
-  },
-  {
-    label: "Total travel time for served taxi passengers",
-    borderColor: "rgb(182, 101, 122)",
-    tension: 0.1,
-  },
-]);
-
 const passengersTimeSavedChart = createChart("passengersTimeSavedChart", [
   {
     label: "Total difference in trip time between models",
     borderColor: "rgb(75, 192, 192)",
+    tension: 0.1,
+  },
+]);
+
+const satisfactionChart = createChart("satisfactionChart", [
+  {
+    label: "Satisfaction score for UBEAR passengers",
+    borderColor: "rgb(75, 192, 192)",
+    tension: 0.1,
+  },
+  {
+    label: "Satisfaction score for taxi passengers",
+    borderColor: "rgb(182, 101, 122)",
+    tension: 0.1,
+  },
+]);
+
+const profitChart = createChart("profitChart", [
+  {
+    label: "Money made by UBEAR",
+    borderColor: "rgb(75, 192, 192)",
+    tension: 0.1,
+  },
+  {
+    label: "Money made by a taxi company",
+    borderColor: "rgb(182, 101, 122)",
     tension: 0.1,
   },
 ]);
