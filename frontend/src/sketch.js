@@ -143,6 +143,17 @@ let simulation1 = function (p) {
       "Hotspot position:";
   };
 
+  function showHotspot(p) {
+    let hc = p.color(255, 0, 0, 70);
+    p.noStroke();
+    p.fill(hc);
+    p.square(
+      hotspotPositionX * cellSize,
+      hotspotPositionY * cellSize,
+      cellSize
+    );
+  }
+
   function update(data) {
     updatesCounter++;
     updatesCounterElement.html(updatesCounter);
@@ -222,6 +233,11 @@ let simulation1 = function (p) {
     for (let passengerID of passengersIDs) {
       passengers[passengerID].show(p);
     }
+
+    if (hotspotsCheckbox.checked()) {
+      showHotspot(p);
+    }
+
     let maxY = Math.max(
       metrics.taxi_cars.sum_travelled,
       metrics.taxi_passengers.sum_travelled,
@@ -283,6 +299,11 @@ let simulation1 = function (p) {
         if (map.grid[x][y] == 1) {
           hotspotPositionX = x;
           hotspotPositionY = y;
+          map.show(p);
+          for (let carID of carsIDs) {
+            cars[carID].show(p);
+          }
+          showHotspot(p);
           document.getElementById("hotspotCoordinates").innerHTML =
             "Hotspot position: (" +
             hotspotPositionX +
