@@ -86,7 +86,7 @@ def get_cars_positions(guid):
 
 def no_visualization(content):
     data = request.get_json()
-    number_of_simulations = content['number_of_simulations'] if 'number_of_simulations' in content else 10
+    number_of_simulations = content['number_of_simulations'] if 'number_of_simulations' in content else 1
     threads_list = []
     main_thread = threading.Thread(target=thread_creator, args=(number_of_simulations, content))
     main_thread.start()
