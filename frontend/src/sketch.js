@@ -55,6 +55,8 @@ let inputPassSpawnMin;
 // Passanger spawn maximum
 let inputPassSpawnMax;
 
+let inputLoadConfig;
+
 let inputMapSize;
 // if checked, simulation will be performed without visualization (as fast as possible)
 let noVisualizationCheckBox;
@@ -101,6 +103,7 @@ let simulation1 = function (p) {
 
     inputMapSize = p.select("#mapSize");
 
+    inputLoadConfig = p.select("#loadConfigName");
     // initialize map
     map = new City(cellNum);
 
@@ -282,6 +285,9 @@ let simulation1 = function (p) {
     let data = {};
     data.maxUpdates = inputMaxUpdates.value();
     data.mapSize = inputMapSize.value();
+    data.minPassSpawn = inputPassSpawnMin.value();
+    data.maxPassSpawn = inputPassSpawnMax.value();
+
     let carsToSave = {};
     for (let car of Object.values(cars)){
       const carToSave = {
@@ -326,9 +332,8 @@ let simulation1 = function (p) {
 
   function onLoadConfigButtonPressed() {
     function loadConfig(data){
-      inputMapSize.value(data.mapSize);
-      cellSize = size / cellNum;
-      refreshMapSize();
+      
+    
       for (let carObj of Object.values(data.cars)){
         const car = new Car(p, carObj.id, carObj.x, carObj.y);
         const taxiCar = new Car(p, carObj.id, carObj.x, carObj.y);
@@ -338,21 +343,23 @@ let simulation1 = function (p) {
         taxiCar.show(p);
       }
       carsIDs = data.carsIDs;
-      inputMaxUpdates.value(68) // data.inputMaxUpdates
+      inputMaxUpdates.value(data.maxUpdates); // data.inputMaxUpdates
+      inputPassSpawnMax.value(data.maxPassSpawn);
+      inputPassSpawnMin.value(data.minPassSpawn);
+
+      inputMapSize.value(data.mapSize);
+      cellSize = size / cellNum;
+      refreshMapSize();
 
     }
 
-    console.log("hi");
-    p.loadJSON('assets/data.json', loadConfig);
-    //var mydata = JSON.parse(data);
-    //const myObj = JSON.parse(data);
-    //x = data["mapSize"];
-    //ejemplo = data.getInt("mapSize");
-    //console.log(ejemplo);
-    //const myJSON = p.loadJSON('assets/data.json');
-    //const myObj = JSON.parse(myJSON);
-    // x = data.mapSize;
-    // console.log(data);
+    var fileName = inputLoadConfig.value();
+    console.log(fileName);
+
+    const str = 'assets/';
+
+    p.loadJSON('assets/' +fileName+ '.json', loadConfig);
+    loadConfig();
   }
 
   function startSimulation() {
