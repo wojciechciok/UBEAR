@@ -134,6 +134,27 @@
             />
           </div>
 
+          <div class="form-group">
+            <label for="mapSize">Map Size</label>
+            <input
+              type="number"
+              class="form-control"
+              id="mapSize"
+              value="41"
+            />
+          </div>
+          
+
+          <div class="form-group">
+            <label for="loadConfigName">Load Config</label>
+            <input
+              type="text"
+              class="form-control"
+              id="loadConfigName"
+              value=""
+            />
+          </div>
+
           <div id="mapModeRadioButton"></div>
           <div id="mapHotspotPositionRadBtn"></div> 
           <p id="hotspotCoordinates"></p>
@@ -196,6 +217,20 @@
 
           <button type="button" class="btn btn-light" id="startButton">
             Start Simulation
+          </button>
+          
+          <button type="button" class="btn btn-light" id="saveConfigButton">
+            Save Configuration
+          </button>
+
+          <button type="button" class="btn btn-light" id="loadConfigButton">
+            Load Configuration!
+          </button>
+
+
+          
+          <button type="button" class="btn btn-light" id="refreshMapSize">
+            Refresh Map Size
           </button>
         </div>
         <div class="col text-center">

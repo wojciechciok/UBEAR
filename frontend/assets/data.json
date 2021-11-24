@@ -1,0 +1,8 @@
+{
+  "maxUpdates": "50",
+  "mapSize": "21",
+  "minPassSpawn": "1",
+  "maxPassSpawn": "10",
+  "cars": {},
+  "carsIDs": []
+}

@@ -6,9 +6,9 @@ const url = " http://localhost:105";
 ///////////////
 
 // size of the map (width and height)
-const size = 500;
+let size = 500;
 // number of cells in a row
-const cellNum = 41;
+let cellNum = 41;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
@@ -23,7 +23,7 @@ const refreshRate = 15;
 // event source https://developer.mozilla.org/en-US/docs/Web/API/EventSource
 let eventSource;
 // size of a cell in pixels
-const cellSize = size / cellNum;
+let cellSize = size / cellNum;
 // global object of the map see Map.js
 let map;
 // global object of cars see Car.js
@@ -56,10 +56,16 @@ let inputFramerate;
 let inputPassSpawnMin;
 // Passanger spawn maximum
 let inputPassSpawnMax;
+
+let inputLoadConfig;
+
+let inputMapSize;
 // if checked, simulation will be performed without visualization (as fast as possible)
 let noVisualizationCheckBox;
 // Start Button
 let startButton;
+
+let saveConfigButton;
 // Road Construction, Taxi radio
 let radioBtn;
 // updates counter
@@ -74,6 +80,9 @@ let positionRadBtn;
 let hotspotPositionX;
 let hotspotPositionY;
 let hotspotCoordinates;
+
+let button2;
+let button3;
 
 ////////////////////////
 // UBEAR MODEL CANVAS //
@@ -102,6 +111,9 @@ let simulation1 = function (p) {
     // Maximum interval time for passanger spawning
     inputPassSpawnMax = p.select("#maxPassengerSpawnIntervalInput");
 
+    inputMapSize = p.select("#mapSize");
+
+    inputLoadConfig = p.select("#loadConfigName");
     // initialize map
     map = new City(cellNum);
 
@@ -111,6 +123,15 @@ let simulation1 = function (p) {
     // Create Button
     button = p.select("#startButton");
     button.mousePressed(startSimulation);
+
+    button2 = p.select("#saveConfigButton");
+    button2.mousePressed(saveData);
+
+    button3 = p.select("#refreshMapSize");
+    button3.mousePressed(refreshMapSize);
+    
+    buttonLoad = p.select("#loadConfigButton")
+    buttonLoad.mousePressed(onLoadConfigButtonPressed);
 
     // Create Radio Buttons
     let radioWrapper = p.select("#mapModeRadioButton");
@@ -315,6 +336,29 @@ let simulation1 = function (p) {
     return new Car(p, id, x, y);
   }
 
+  function saveData(){
+    //console.log("s");
+    let data = {};
+    data.maxUpdates = inputMaxUpdates.value();
+    data.mapSize = inputMapSize.value();
+    data.minPassSpawn = inputPassSpawnMin.value();
+    data.maxPassSpawn = inputPassSpawnMax.value();
+
+    let carsToSave = {};
+    for (let car of Object.values(cars)){
+      const carToSave = {
+        id: car.id,
+        x: car.x,
+        y: car.y
+      };
+      carsToSave[carToSave.id] = carToSave;
+    }
+    data.cars = carsToSave;
+    data.carsIDs = carsIDs;
+    data.mapSize = inputMapSize.value();
+    p.saveJSON(data, 'data.json');
+  }
+
   // spawns taxis based on the spawn taxi input field
   function spawnAmountOfTaxis(amount) {
     for (let i = 0; i < amount; i++) {
@@ -327,6 +371,42 @@ let simulation1 = function (p) {
       );
       carsIDs.push(carsIDs.length);
     }
+  }
+
+  function refreshMapSize() {
+  
+    if  (simulationStarted) {
+      return;
+    }
+    cellNum =  inputMapSize.value();
+    cellSize = size / cellNum;
+    map = new City(cellNum);
+    map.show(p);
+    taxiMap = new City(cellNum);
+    taxiMap.show(p);
+  }
+
+  function onLoadConfigButtonPressed() {
+    function loadConfig(data){
+      inputMapSize.value(data.mapSize);
+      cellSize = size / cellNum;
+      refreshMapSize();
+      for (let carObj of Object.values(data.cars)){
+        const car = new Car(p, carObj.id, carObj.x, carObj.y);
+        const taxiCar = new Car(p, carObj.id, carObj.x, carObj.y);
+        cars[car.id] = car;
+        taxiCars[taxiCar.id] = taxiCar;
+        car.show(p);
+        taxiCar.show(p);
+      }
+      carsIDs = data.carsIDs;
+      inputMaxUpdates.value(data.maxUpdates); // data.inputMaxUpdates
+      inputPassSpawnMax.value(data.maxPassSpawn);
+      inputPassSpawnMin.value(data.minPassSpawn);
+    }
+
+    var fileName = inputLoadConfig.value();
+    p.loadJSON('assets/' + fileName + '.json', loadConfig);
   }
 
   function startSimulation() {
