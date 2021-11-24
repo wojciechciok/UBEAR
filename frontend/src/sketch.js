@@ -332,8 +332,9 @@ let simulation1 = function (p) {
 
   function onLoadConfigButtonPressed() {
     function loadConfig(data){
-      
-    
+      inputMapSize.value(data.mapSize);
+      cellSize = size / cellNum;
+      refreshMapSize();
       for (let carObj of Object.values(data.cars)){
         const car = new Car(p, carObj.id, carObj.x, carObj.y);
         const taxiCar = new Car(p, carObj.id, carObj.x, carObj.y);
@@ -346,20 +347,10 @@ let simulation1 = function (p) {
       inputMaxUpdates.value(data.maxUpdates); // data.inputMaxUpdates
       inputPassSpawnMax.value(data.maxPassSpawn);
       inputPassSpawnMin.value(data.minPassSpawn);
-
-      inputMapSize.value(data.mapSize);
-      cellSize = size / cellNum;
-      refreshMapSize();
-
     }
 
     var fileName = inputLoadConfig.value();
-    console.log(fileName);
-
-    const str = 'assets/';
-
-    p.loadJSON('assets/' +fileName+ '.json', loadConfig);
-    loadConfig();
+    p.loadJSON('assets/' + fileName + '.json', loadConfig);
   }
 
   function startSimulation() {
