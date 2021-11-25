@@ -85,7 +85,8 @@ def move_cars(cars, passengers, served_passengers, is_ubear=True):
                 if passenger.is_in_car:
                     if is_ubear:
                         if passenger.trip_cost < PASSENGER_INITIAL_FEE + passenger.shortest_path_length * PASSENGER_TRIP_COST_PER_KM:
-                            passenger.trip_cost += PASSENGER_TRIP_COST_PER_KM / len([p for p in car.passengers_list if passengers[p].is_in_car == True])
+                            passenger.trip_cost += PASSENGER_TRIP_COST_PER_KM / len(
+                                [p for p in car.passengers_list if passengers[p].is_in_car == True])
                     elif not is_ubear:
                         passenger.trip_cost += PASSENGER_TRIP_COST_PER_KM
                 if car.x == passenger.x and car.y == passenger.y:
@@ -94,9 +95,10 @@ def move_cars(cars, passengers, served_passengers, is_ubear=True):
                 if car.x == passenger.x_dest and car.y == passenger.y_dest and passenger.is_in_car:
                     car.passengers_list.remove(passenger.id)
                     if is_ubear:
-                        passenger.cost_score = (PASSENGER_INITIAL_FEE + passenger.shortest_path_length * (PASSENGER_TRIP_COST_PER_KM / CAR_CAPACITY)) / passenger.trip_cost
+                        passenger.cost_score = (PASSENGER_INITIAL_FEE + passenger.shortest_path_length * (
+                                    PASSENGER_TRIP_COST_PER_KM / CAR_CAPACITY)) / passenger.trip_cost
                         passenger.time_score = passenger.shortest_path_length / (
-                                    passenger.traveled + passenger.waited_for_car)
+                                passenger.traveled + passenger.waited_for_car)
                     else:
                         passenger.time_score = passenger.traveled / (passenger.traveled + passenger.waited_for_car)
                     served_passengers.append(passengers.pop(passenger.id, None))
