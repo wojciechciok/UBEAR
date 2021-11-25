@@ -11,6 +11,9 @@ from paths_collection import PathsCollection, ValidCarPaths
 # random 0-10 ticks
 CAR_CAPACITY = 4
 PASSENGER_DETOUR_TOLERANCE = 1.5
+PASSENGER_TRIP_COST_PER_KM = 4.5
+PASSENGER_INITIAL_FEE = 15
+COMPANY_COST_PER_KM = 2
 
 
 class EmployeeEncoder(JSONEncoder):
@@ -73,18 +76,32 @@ def is_point_passenger_destination_location(passengers, passenger, point):
     return False, None
 
 
-def move_cars(cars, passengers, served_passengers):
+def move_cars(cars, passengers, served_passengers, is_ubear=True):
     for car in cars:
         if len(car.passengers_list) > 0:
             for passenger_id in car.passengers_list:
                 # we could potentially keep dictionary of passengers instead
                 passenger = passengers[passenger_id]
+                if passenger.is_in_car:
+                    if is_ubear:
+                        if passenger.trip_cost < PASSENGER_INITIAL_FEE + passenger.shortest_path_length * PASSENGER_TRIP_COST_PER_KM:
+                            passenger.trip_cost += PASSENGER_TRIP_COST_PER_KM / len([p for p in car.passengers_list if passengers[p].is_in_car == True])
+                    elif not is_ubear:
+                        passenger.trip_cost += PASSENGER_TRIP_COST_PER_KM
                 if car.x == passenger.x and car.y == passenger.y:
                     passenger.is_in_car = True
+                    passenger.trip_cost += PASSENGER_INITIAL_FEE
                 if car.x == passenger.x_dest and car.y == passenger.y_dest and passenger.is_in_car:
                     car.passengers_list.remove(passenger.id)
+                    if is_ubear:
+                        passenger.cost_score = (PASSENGER_INITIAL_FEE + passenger.shortest_path_length * (PASSENGER_TRIP_COST_PER_KM / CAR_CAPACITY)) / passenger.trip_cost
+                        passenger.time_score = passenger.shortest_path_length / (
+                                    passenger.traveled + passenger.waited_for_car)
+                    else:
+                        passenger.time_score = passenger.traveled / (passenger.traveled + passenger.waited_for_car)
                     served_passengers.append(passengers.pop(passenger.id, None))
-        car.move()
+
+        car.move(COMPANY_COST_PER_KM)
 
 
 def regular_update(cache):
@@ -166,11 +183,11 @@ def update(cache):
             passenger.waited_for_car += 1
             passenger.waiting_patience += 1
 
-    move_cars(cars, passengers, cache["served_passengers"])
-    move_cars(taxi_cars, taxi_passengers, cache["served_taxi_passengers"])
-
     car_pooling_update(cache)
     regular_update(cache)
+
+    move_cars(cars, passengers, cache["served_passengers"], is_ubear=True)
+    move_cars(taxi_cars, taxi_passengers, cache["served_taxi_passengers"], is_ubear=False)
 
     # random passenger spawning
     current_next_passenger_spawn = cache["next_passenger_spawn"]

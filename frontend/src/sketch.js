@@ -8,7 +8,7 @@ const url = " http://localhost:105";
 // size of the map (width and height)
 let size = 500;
 // number of cells in a row
-let cellNum = 41;
+let cellNum = 31;
 // how wide is one block (how many cells separate two streets)
 const density = 5;
 // number of cars on the map
@@ -99,6 +99,7 @@ let simulation1 = function (p) {
 
   // setup - this function is called once at the beginning of the program
   p.setup = () => {
+    document.getElementById('loadConfigName').addEventListener('change', onChange);
     p.createCanvas(size, size);
 
     inputMaxUpdates = p.select("#maxUpdatesInput");
@@ -112,6 +113,8 @@ let simulation1 = function (p) {
     inputPassSpawnMax = p.select("#maxPassengerSpawnIntervalInput");
 
     inputMapSize = p.select("#mapSize");
+    cellNum = inputMapSize.value();
+    cellSize = size / cellNum;
 
     inputLoadConfig = p.select("#loadConfigName");
     // initialize map
@@ -129,9 +132,6 @@ let simulation1 = function (p) {
 
     button3 = p.select("#refreshMapSize");
     button3.mousePressed(refreshMapSize);
-    
-    buttonLoad = p.select("#loadConfigButton")
-    buttonLoad.mousePressed(onLoadConfigButtonPressed);
 
     // Create Radio Buttons
     let radioWrapper = p.select("#mapModeRadioButton");
@@ -168,12 +168,15 @@ let simulation1 = function (p) {
       "Hotspot position:";
   };
 
-
-  function showHotspot(p){
+  function showHotspot(p) {
     let hc = p.color(255, 0, 0, 70);
     p.noStroke();
-    p.fill(hc)
-    p.square(hotspotPositionX * cellSize, hotspotPositionY * cellSize, cellSize);
+    p.fill(hc);
+    p.square(
+      hotspotPositionX * cellSize,
+      hotspotPositionY * cellSize,
+      cellSize
+    );
   }
 
   function update(data) {
@@ -256,19 +259,56 @@ let simulation1 = function (p) {
       passengers[passengerID].show(p);
     }
 
-    if (hotspotsCheckbox.checked()){
+    if (hotspotsCheckbox.checked()) {
       showHotspot(p);
     }
 
-    // update chart
-    addData(taxiChart, "", [
+    let maxY = Math.max(
       metrics.taxi_cars.sum_travelled,
       metrics.taxi_passengers.sum_travelled,
+      metrics.cars.sum_travelled,
+      metrics.passengers.sum_travelled
+    );
+    // update chart
+    addData(
+      taxiChart,
+      "",
+      [metrics.taxi_cars.sum_travelled, metrics.taxi_passengers.sum_travelled],
+      maxY
+    );
+
+    addData(
+      chart,
+      "",
+      [metrics.cars.sum_travelled, metrics.passengers.sum_travelled],
+      maxY
+    );
+
+    addData(passengersServedChart, "", [
+      metrics.served_passengers_count,
+      metrics.served_taxi_passengers_count,
     ]);
 
-    addData(chart, "", [
-      metrics.cars.sum_travelled,
-      metrics.passengers.sum_travelled,
+    addData(passengersTimeSavedChart, "", [
+      metrics.taxi_passengers.common_sum_waited_for_car +
+        metrics.taxi_passengers.common_sum_travelled -
+        (metrics.passengers.common_sum_waited_for_car +
+          metrics.passengers.common_sum_travelled),
+    ]);
+
+    resetChart(satisfactionChart);
+    addData(satisfactionChart, "TIME", [
+      metrics.passengers.time_satisfaction,
+      metrics.taxi_passengers.time_satisfaction,
+    ]);
+    addData(satisfactionChart, "COST", [
+      metrics.passengers.cost_satisfaction,
+      metrics.taxi_passengers.time_satisfaction,
+    ]);
+
+    addData(profitChart, "", [
+      metrics.passengers.profit - metrics.cars.cost,
+      metrics.taxi_passengers.profit - metrics.taxi_cars.cost,
     ]);
   }
 
@@ -336,7 +376,7 @@ let simulation1 = function (p) {
     return new Car(p, id, x, y);
   }
 
-  function saveData(){
+  function saveData() {
     //console.log("s");
     let data = {};
     data.maxUpdates = inputMaxUpdates.value();
@@ -345,18 +385,18 @@ let simulation1 = function (p) {
     data.maxPassSpawn = inputPassSpawnMax.value();
 
     let carsToSave = {};
-    for (let car of Object.values(cars)){
+    for (let car of Object.values(cars)) {
       const carToSave = {
         id: car.id,
         x: car.x,
-        y: car.y
+        y: car.y,
       };
       carsToSave[carToSave.id] = carToSave;
     }
     data.cars = carsToSave;
     data.carsIDs = carsIDs;
     data.mapSize = inputMapSize.value();
-    p.saveJSON(data, 'data.json');
+    p.saveJSON(data, "data.json");
   }
 
   // spawns taxis based on the spawn taxi input field
@@ -374,11 +414,10 @@ let simulation1 = function (p) {
   }
 
   function refreshMapSize() {
-  
-    if  (simulationStarted) {
+    if (simulationStarted) {
       return;
     }
-    cellNum =  inputMapSize.value();
+    cellNum = inputMapSize.value();
     cellSize = size / cellNum;
     map = new City(cellNum);
     map.show(p);
@@ -386,34 +425,49 @@ let simulation1 = function (p) {
     taxiMap.show(p);
   }
 
-  function onLoadConfigButtonPressed() {
-    function loadConfig(data){
-      inputMapSize.value(data.mapSize);
-      cellSize = size / cellNum;
-      refreshMapSize();
-      for (let carObj of Object.values(data.cars)){
-        const car = new Car(p, carObj.id, carObj.x, carObj.y);
-        const taxiCar = new Car(p, carObj.id, carObj.x, carObj.y);
-        cars[car.id] = car;
-        taxiCars[taxiCar.id] = taxiCar;
-        car.show(p);
-        taxiCar.show(p);
-      }
-      carsIDs = data.carsIDs;
-      inputMaxUpdates.value(data.maxUpdates); // data.inputMaxUpdates
-      inputPassSpawnMax.value(data.maxPassSpawn);
-      inputPassSpawnMin.value(data.minPassSpawn);
-    }
 
-    var fileName = inputLoadConfig.value();
-    p.loadJSON('assets/' + fileName + '.json', loadConfig);
+  function onChange(event) {
+    let reader = new FileReader();
+    reader.onload = onReaderLoad;
+    reader.readAsText(event.target.files[0]);
   }
+
+
+  function onReaderLoad(event){
+      console.log(event.target.result);
+      let obj = JSON.parse(event.target.result);
+      loadConfig(obj);
+  }
+
+
+  function loadConfig(data){
+    inputMapSize.value(data.mapSize);
+    cellSize = size / cellNum;
+    refreshMapSize();
+    for (let carObj of Object.values(data.cars)){
+      const car = new Car(p, carObj.id, carObj.x, carObj.y);
+      const taxiCar = new Car(p, carObj.id, carObj.x, carObj.y);
+      cars[car.id] = car;
+      taxiCars[taxiCar.id] = taxiCar;
+      car.show(p);
+      taxiCar.show(p);
+    }
+    carsIDs = data.carsIDs;
+    inputMaxUpdates.value(data.maxUpdates); // data.inputMaxUpdates
+    inputPassSpawnMax.value(data.maxPassSpawn);
+    inputPassSpawnMin.value(data.minPassSpawn);
+  }
+
 
   function startSimulation() {
     updatesCounter = 0;
     simulationStarted = true;
     resetChart(taxiChart);
     resetChart(chart);
+    resetChart(passengersServedChart);
+    resetChart(passengersTimeSavedChart);
+    resetChart(profitChart);
+
     for (let x = 0; x < map.grid.length; x++) {
       for (let y = 0; y < map.grid[x].length; y++) {
         if (map.grid[x][y]) {

@@ -32,6 +32,11 @@
         padding-top: 0;
         margin-top: 0;
       }
+
+      button,
+      input[type="button"] {
+        margin-bottom: 10px !important;
+      }
     </style>
     <link
       rel="stylesheet"
@@ -83,12 +88,21 @@
             <h1 class="ubear-color-100">UBEAR</h1>
           </div>
           <div class="form-group">
+            <label for="loadConfigName">Load Config</label>
+            <input
+              type="file"
+              class="form-control"
+              id="loadConfigName"
+              value=""
+            />
+          </div>
+          <div class="form-group">
             <label for="maxUpdatesInput">Max updates</label>
             <input
               type="number"
               class="form-control"
               id="maxUpdatesInput"
-              value="50"
+              value="500"
             />
           </div>
           <div class="form-group">
@@ -103,6 +117,13 @@
             />
           </div>
           <div class="form-group">
+            <label for="mapSize">Map Size</label>
+            <input type="number" class="form-control" id="mapSize" value="31" />
+          </div>
+          <button type="button" class="btn btn-light" id="refreshMapSize">
+            Refresh Map Size
+          </button>
+          <div class="form-group">
             <label for="minPassengerSpawnIntervalInput"
               >Minimum value for passenger spawning interval</label
             >
@@ -110,7 +131,7 @@
               type="number"
               class="form-control"
               id="minPassengerSpawnIntervalInput"
-              value="1"
+              value="8"
             />
           </div>
           <div class="form-group">
@@ -130,35 +151,14 @@
               type="number"
               class="form-control"
               id="randomTaxiSpawnInput"
-              value="0"
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="mapSize">Map Size</label>
-            <input
-              type="number"
-              class="form-control"
-              id="mapSize"
-              value="41"
-            />
-          </div>
-          
-
-          <div class="form-group">
-            <label for="loadConfigName">Load Config</label>
-            <input
-              type="text"
-              class="form-control"
-              id="loadConfigName"
-              value=""
+              value="4"
             />
           </div>
 
           <div id="mapModeRadioButton"></div>
-          <div id="mapHotspotPositionRadBtn"></div> 
+          <div id="mapHotspotPositionRadBtn"></div>
           <p id="hotspotCoordinates"></p>
-          
+
           <div class="form-group form-check">
             <input
               type="checkbox"
@@ -171,7 +171,6 @@
           </div>
 
           <div class="hotspots control">
-
             <div class="form-group form-check">
               <input
                 type="checkbox"
@@ -184,7 +183,9 @@
             </div>
 
             <div class="form-group">
-              <label for="hotspotDestUpdateNumber">Update number for creating a hotspot destination</label>
+              <label for="hotspotDestUpdateNumber"
+                >Update number for creating a hotspot destination</label
+              >
               <input
                 type="number"
                 class="form-control"
@@ -194,7 +195,9 @@
             </div>
 
             <div class="form-group">
-              <label for="hotspotLocUpdateNumber">Update number for the hotspot come back</label>
+              <label for="hotspotLocUpdateNumber"
+                >Update number for the hotspot come back</label
+              >
               <input
                 type="number"
                 class="form-control"
@@ -204,7 +207,9 @@
             </div>
 
             <div class="form-group">
-              <label for="hotspotPassNumber">Number of passengers for the hotspot</label>
+              <label for="hotspotPassNumber"
+                >Number of passengers for the hotspot</label
+              >
               <input
                 type="number"
                 class="form-control"
@@ -212,40 +217,60 @@
                 value="10"
               />
             </div>
-
           </div>
-
-          <button type="button" class="btn btn-light" id="startButton">
-            Start Simulation
-          </button>
-          
           <button type="button" class="btn btn-light" id="saveConfigButton">
             Save Configuration
           </button>
-
-          <button type="button" class="btn btn-light" id="loadConfigButton">
-            Load Configuration!
-          </button>
-
-
-          
-          <button type="button" class="btn btn-light" id="refreshMapSize">
-            Refresh Map Size
+          <button type="button" class="btn btn-light" id="startButton">
+            Start Simulation
           </button>
         </div>
         <div class="col text-center">
+          <h1>Visualisation</h1>
           <div class="row">
-            <div class="col"><h1>UBEAR Carpooling</h1></div>
-            <div class="col"><h1>Regular Taxi Company</h1></div>
+            <div class="col">
+              <h3>UBEAR Carpooling</h3>
+              <div class="block mx-auto" id="c1"></div>
+            </div>
+            <div class="col">
+              <h3>Regular Taxi Company</h3>
+              <div class="block mx-auto" id="c2"></div>
+            </div>
           </div>
           <hr />
-          <h2>Visualisation</h2>
+          <h1>Metrics</h1>
           <div class="row">
-            <div class="col"><div class="block mx-auto" id="c1"></div></div>
-            <div class="col"><div class="block mx-auto" id="c2"></div></div>
+            <div class="col">
+              <h3>Satisfaction score for passengers</h3>
+            </div>
+            <div class="col">
+              <h3>Profit as difference between operation cost and income</h3>
+            </div>
           </div>
-          <hr />
-          <h2>Metrics</h2>
+          <div class="row">
+            <div class="col">
+              <div class="block mx-auto">
+                <canvas
+                  id="satisfactionChart"
+                  width="500"
+                  height="500"
+                ></canvas>
+              </div>
+            </div>
+            <div class="col">
+              <div class="block mx-auto">
+                <canvas id="profitChart" width="500" height="500"></canvas>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <h3>Distances travelled by UBEAR vehicles and passengers</h3>
+            </div>
+            <div class="col">
+              <h3>Distances travelled by taxis and their passengers</h3>
+            </div>
+          </div>
           <div class="row">
             <div class="col">
               <div class="block mx-auto">
@@ -258,9 +283,38 @@
               </div>
             </div>
           </div>
+          <div class="row">
+            <div class="col">
+              <h3>Numbers of served passengers by a service</h3>
+            </div>
+            <div class="col">
+              <h3>Total time saved by UBEAR passengers</h3>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <div class="block mx-auto">
+                <canvas
+                  id="passengersServedChart"
+                  width="500"
+                  height="500"
+                ></canvas>
+              </div>
+            </div>
+            <div class="col">
+              <div class="block mx-auto">
+                <canvas
+                  id="passengersTimeSavedChart"
+                  width="500"
+                  height="500"
+                ></canvas>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </main>
   </body>
+  <script src="src/chartsConfig.js"></script>
   <script src="src/charts.js"></script>
 </html>

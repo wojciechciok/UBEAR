@@ -23,6 +23,9 @@ class Passenger:
         self.traveled = 0  # time spent in a car
 
         self.shortest_path_length = None
+        self.trip_cost = 0
+        self.cost_score = 0
+        self.time_score = 0
         self.waiting_patience = waiting_patience
 
 
