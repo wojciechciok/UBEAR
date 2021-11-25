@@ -376,13 +376,22 @@ let simulation1 = function (p) {
     return new Car(p, id, x, y);
   }
 
+
   function saveData() {
-    //console.log("s");
     let data = {};
     data.maxUpdates = inputMaxUpdates.value();
     data.mapSize = inputMapSize.value();
     data.minPassSpawn = inputPassSpawnMin.value();
     data.maxPassSpawn = inputPassSpawnMax.value();
+    data.enableHotspots = hotspotsCheckbox.checked();
+    data.updateNumDestHotspot = p.int(hotspotDestUpdateNumber.value());
+    data.updateNumLocHotspot = p.int(hotspotLocUpdateNumber.value());
+    data.hotspotPassNumber = p.int(hotspotPassNumber.value());
+    data.hotspotPositionX = hotspotPositionX;
+    data.hotspotPositionY = hotspotPositionY;
+    data.framerate = p.int(inputFramerate.value());
+    data.no_visualization = noVisualizationCheckBox.checked();
+    data.taxiSpawnerInp = taxiSpawnerInp.value();
 
     let carsToSave = {};
     for (let car of Object.values(cars)) {
@@ -396,6 +405,7 @@ let simulation1 = function (p) {
     data.cars = carsToSave;
     data.carsIDs = carsIDs;
     data.mapSize = inputMapSize.value();
+    data.grid = map.grid;
     p.saveJSON(data, "data.json");
   }
 
@@ -434,7 +444,6 @@ let simulation1 = function (p) {
 
 
   function onReaderLoad(event){
-      console.log(event.target.result);
       let obj = JSON.parse(event.target.result);
       loadConfig(obj);
   }
@@ -442,8 +451,28 @@ let simulation1 = function (p) {
 
   function loadConfig(data){
     inputMapSize.value(data.mapSize);
-    cellSize = size / cellNum;
     refreshMapSize();
+    map.grid = data.grid;
+    map.show(p);
+    taxiMap.grid = JSON.parse(JSON.stringify(data.grid));
+    taxiMap.show(p);
+    // console.log(JSON.stringify(data.grid));
+    // console.log(JSON.stringify(map));
+    // console.log(JSON.stringify(taxiMap));
+
+    hotspotsCheckbox.checked(data.enableHotspots);
+    hotspotDestUpdateNumber.value(data.updateNumDestHotspot);
+    hotspotLocUpdateNumber.value(data.updateNumLocHotspot);
+    hotspotPassNumber.value(data.hotspotPassNumber);
+    hotspotPositionX = data.hotspotPositionX;
+    hotspotPositionY = data.hotspotPositionY;
+    inputFramerate.value(data.framerate);
+    noVisualizationCheckBox.checked(data.no_visualization);
+    taxiSpawnerInp.value(data.taxiSpawnerInp);
+    if (hotspotsCheckbox.checked()){
+      showHotspot(p);
+    }
+
     for (let carObj of Object.values(data.cars)){
       const car = new Car(p, carObj.id, carObj.x, carObj.y);
       const taxiCar = new Car(p, carObj.id, carObj.x, carObj.y);
