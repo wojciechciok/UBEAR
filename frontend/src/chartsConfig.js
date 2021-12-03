@@ -14,7 +14,7 @@ function resetChart(chart) {
   chart.data.labels = [];
 }
 
-Chart.defaults.color = "#fff";
+Chart.defaults.color = "#000";
 
 function createChart(id, datasets) {
   const ctx = document.getElementById(id).getContext("2d");

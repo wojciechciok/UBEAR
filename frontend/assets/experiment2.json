@@ -1,5 +1,5 @@
 {
-  "maxUpdates": "500",
+  "maxUpdates": "1000",
   "mapSize": "41",
   "minPassSpawn": "8",
   "maxPassSpawn": "10",
@@ -189,9 +189,9 @@
     [
       1,
       0,
-      0,
-      0,
-      0,
+      true,
+      true,
+      true,
       1,
       0,
       0,
@@ -232,7 +232,7 @@
     [
       1,
       0,
-      0,
+      true,
       0,
       0,
       1,
